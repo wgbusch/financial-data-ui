@@ -14,7 +14,7 @@ import GridHeader from "./GridHeader";
 export default class ParentGrid extends React.Component {
 
     BACKEND = {
-        marketOverview: 'http://127.0.0.1:5000/api/v1/market-overview/?start=0&end=500',
+        marketOverview: 'http://127.0.0.1:5000/api/v1/market-overview/?start=0&end=100',
     }
 
     constructor(props) {

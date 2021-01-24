@@ -1,8 +1,0 @@
-pandas
-numpy
-Yfinance
-plotly
-requests
-flask_restful
-html5lib
-flask_cors

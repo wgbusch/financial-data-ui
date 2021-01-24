@@ -22,12 +22,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#data files
-/python/data/historical_data/*.csv
-/python/data/market_daata/*.csv
-/python/data/options/*.csv
-
 #intelliJ
-/python/.idea
-/python/__pycache__
 /.idea
