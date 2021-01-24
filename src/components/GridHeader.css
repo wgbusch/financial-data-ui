@@ -1,0 +1,16 @@
+.grid-header {
+    height: 8%;
+    padding: 0.5rem;
+    background-color: lightgray;
+    display: flex;
+}
+
+.actions{
+    grid-area: actions;
+    padding: 8px;
+    align-self: center;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: wrap;
+    float:right;
+}
