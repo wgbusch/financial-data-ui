@@ -8,8 +8,6 @@ import {columnTypes} from "../columnTypes";
 import './DetailGrid.css'
 import buyOrWriteCellMainRenderer from "./buyOrWriteCellMainRenderer";
 import BuyOrWriteCellOptionRenderer from "./BuyOrWriteCellOptionRenderer";
-import {Menu, Dropdown} from 'antd';
-import {DownOutlined} from '@ant-design/icons';
 import ExpiryDateDropdown from "./ExpiryDateDropdown";
 import RunValuation from "./RunValuation";
 
@@ -90,8 +88,7 @@ export default class DetailGrid extends React.Component {
             <div className="ag-theme-alpine detailGridcontainer">
                 <div style ={{display: 'inline-block'}}>
                 <ExpiryDateDropdown expiryDates ={this.state.columnTypes.expiryDate.filterParams.values}/>
-                <RunValuation></RunValuation>
-
+                <RunValuation/>
                 </div>
                 <AgGridReact
                     id="detailGrid"

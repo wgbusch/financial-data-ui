@@ -1,11 +1,9 @@
-import 'ag-grid-enterprise';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import React from 'react';
-import './DetailGrid.css'
+import 'antd/dist/antd.css';
 import {Select} from 'antd';
 
 const {Option} = Select;
+
 
 export default class ExpiryDateDropdown extends React.Component {
 
@@ -15,12 +13,12 @@ export default class ExpiryDateDropdown extends React.Component {
 
     render() {
         let expiryDates = this.props.expiryDates;
-        if(expiryDates !=null){
+        if (expiryDates != null) {
             console.log(expiryDates.length)
         }
         return (
             <>
-                <Select defaultValue={expiryDates[1]} style={{width: 120}} bordered={false}>
+                <Select defaultValue={expiryDates[2]} style={{width: 120}} getPopupContainer={trigger => trigger.parentNode}>
                     {expiryDates.map((date, i) => <Option value={date}>{date}</Option>)}
                 </Select>
             </>

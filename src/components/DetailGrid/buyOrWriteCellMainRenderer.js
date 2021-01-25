@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
-
-import {Menu, Dropdown} from 'antd';
 import {DownOutlined} from '@ant-design/icons';
-
 
 
 export default class buyOrWriteCellMainRenderer extends Component {

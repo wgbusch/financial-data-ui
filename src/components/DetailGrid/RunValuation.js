@@ -8,10 +8,6 @@ export default class RunValuation extends React.Component {
         size: 'large',
     };
 
-    handleSizeChange = e => {
-        this.setState({size: e.target.value});
-    };
-
     render() {
         const {size} = 2;
         return (
