@@ -13,9 +13,7 @@ export default class ExpiryDateDropdown extends React.Component {
 
     render() {
         let expiryDates = this.props.expiryDates;
-        if (expiryDates != null) {
-            console.log(expiryDates.length)
-        }
+
         return (
             <>
                 <Select defaultValue={expiryDates[2]} style={{width: 120}} getPopupContainer={trigger => trigger.parentNode}>

@@ -37,37 +37,6 @@
     }
 }
 
-.rightPane {
-    width: 100%;
-    display: flex;
-}
-
-.leftPane {
-    flex-grow: 2;
-    height: 100%;
-    width: 600px;
-}
-
-.splitScreen {
-    display: flex;
-    flex-direction: row;
-}
-
-.detailGridcontainer {
-    height: 500px;
-    display: flex;
-    flex-flow: nowrap column;
-    overflow: hidden;
-    padding: 0.5rem;
-}
-
-.container {
-    height: 600px;
-    display: flex;
-    flex-flow: nowrap column;
-    overflow: hidden;
-}
-
 .panel {
     display: flex;
     justify-content: center;

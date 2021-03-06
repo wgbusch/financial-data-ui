@@ -5,12 +5,20 @@
     display: flex;
 }
 
-.actions{
+.actions {
     grid-area: actions;
     padding: 8px;
     align-self: center;
     white-space: nowrap;
     display: flex;
     flex-wrap: wrap;
-    float:right;
+    float: right;
+}
+
+.dropdown-btn > .ant-dropdown-trigger {
+    border: none;
+}
+
+.dropdown-btn > .ant-dropdown-trigger > span {
+    background-color: transparent !important;
 }

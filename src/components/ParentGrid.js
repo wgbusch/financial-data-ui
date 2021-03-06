@@ -9,19 +9,21 @@ import Chart from "./Chart";
 import './ParentGrid.css';
 import {columnTypes} from "./columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
-import GridHeader from "./GridHeader";
+import GridHeader from "./GridHeader/GridHeader";
+import {LocalStorageWrapper} from "./LocalStorageWrapper";
 
 export default class ParentGrid extends React.Component {
 
     BACKEND = {
-        marketOverview: 'http://127.0.0.1:5000/api/v1/market-overview/?start=0&end=100',
+        marketOverview: process.env.REACT_APP_BACKEND + 'market-overview/?start=0&end=100',
     }
 
     constructor(props) {
         super(props);
         this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
-        this.getColumnState = this.getColumnState.bind(this);
         this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
+        this.getColumnState = this.getColumnState.bind(this);
+        this.getCurrentWatchlist = this.getCurrentWatchlist.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -35,13 +37,13 @@ export default class ParentGrid extends React.Component {
             masterDetail: true,
             rowSelection: 'single',
             rowData: null,
-            displaySymbol: "SPY",
             pagination: true,
             view: 'all',
             keepDetailRows: true,
             detailRowHeight: 400,
             detailCellRenderer: 'detailGrid',
             frameworkComponents: {detailGrid: DetailGrid},
+            watchlist: null
         }
     }
 
@@ -66,9 +68,15 @@ export default class ParentGrid extends React.Component {
             );
         };
 
+        const localStorage = new LocalStorageWrapper();
+        const currentWatchlist = localStorage.getCurrentWatchlist();
+        this.setState({watchlist: currentWatchlist});
+
+        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).concat(',');
+
         httpRequest.open(
             'GET',
-            this.BACKEND['marketOverview']
+            this.BACKEND['marketOverview'] //+ watchlistContent
         );
         httpRequest.send();
         httpRequest.onreadystatechange = () => {
@@ -87,31 +95,30 @@ export default class ParentGrid extends React.Component {
         return this.gridColumnApi.getColumnState();
     }
 
+    getCurrentWatchlist = (currentWatchlist) => {
+        this.setState({watchlist: currentWatchlist});
+    }
+
     render() {
         return (
-            <div className="splitScreen">
-                <ResizePanel style={{width: '200%'}} direction="e">
-                    <div className="ag-theme-alpine leftPane container">
-                        <GridHeader getColumnState={this.getColumnState}/>
-                        <AgGridReact
-                            rowSelection={this.state.rowSelection}
-                            rowData={this.state.rowData}
-                            onSelectionChanged={this.handleOnSelectionChanged}
-                            onGridReady={this.handleOnGridReady}
-                            onFirstDataRendered={this.handleFirstDataRendered}
-                            defaultColDef={this.state.defaultColDef}
-                            columnDefs={this.state.columnDefs}
-                            masterDetail={this.state.masterDetail}
-                            detailRowHeight={this.state.detailRowHeight}
-                            detailCellRenderer={this.state.detailCellRenderer}
-                            frameworkComponents={this.state.frameworkComponents}
-                            keepDetailRows={this.state.keepDetailRows}
-                            columnTypes={this.state.columnTypes}
-                            pagination={this.state.pagination}>
-                        </AgGridReact>
-                    </div>
-                </ResizePanel>
-                <Chart symbol={this.state.displaySymbol} className="rightPane container"/>
+            <div className="ag-theme-alpine">
+                <GridHeader getColumnState={this.getColumnState} getCurrentWatchlist={this.getCurrentWatchlist}/>
+                <AgGridReact
+                    rowSelection={this.state.rowSelection}
+                    rowData={this.state.rowData}
+                    onSelectionChanged={this.handleOnSelectionChanged}
+                    onGridReady={this.handleOnGridReady}
+                    onFirstDataRendered={this.handleFirstDataRendered}
+                    defaultColDef={this.state.defaultColDef}
+                    columnDefs={this.state.columnDefs}
+                    masterDetail={this.state.masterDetail}
+                    detailRowHeight={this.state.detailRowHeight}
+                    detailCellRenderer={this.state.detailCellRenderer}
+                    frameworkComponents={this.state.frameworkComponents}
+                    keepDetailRows={this.state.keepDetailRows}
+                    columnTypes={this.state.columnTypes}
+                    pagination={this.state.pagination}>
+                </AgGridReact>
             </div>
         )
     }
