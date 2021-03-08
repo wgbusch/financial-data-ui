@@ -1,11 +1,9 @@
 import React from "react";
 import 'antd/dist/antd.css'
-import {CloseOutlined, PlusOutlined, SaveOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {SaveOutlined} from "@ant-design/icons";
 import './GridHeader.css'
-import {Dropdown, Menu, Select, Tooltip} from "antd";
 import {LocalStorageWrapper} from "../LocalStorageWrapper";
-import AddNewWatchlist from "./AddNewWatchlist";
-import Watchlists from "./Watchlist/Watchlists";
+import Watchlists from "./Watchlists";
 
 export default class GridHeader extends React.Component {
 
@@ -34,14 +32,17 @@ export default class GridHeader extends React.Component {
         httpRequest.send(JSON.stringify(state));
     }
 
+
     render() {
+        const currentWatchlist = this.state.watchlist;
+
         return (
             <div className={"grid-header"}>
                 <h3 className="ant-typography title">Market overview</h3>
-                <h5 style={{fontStyle: 'italic'}}>{this.state.watchlist}</h5>
-                <div className="actions parent">
+                <h5 style={{fontStyle: 'italic', display: 'inline-block'}}>{currentWatchlist}</h5>
+                <div className="actions">
                     <button type="button" onClick={this.handleOnSaveViewClick}
-                            className="ant-btn ant-btn-link actions before" style={{fontSize: '1.5em'}}>
+                            className="ant-btn ant-btn-link actions" style={{fontSize: '1.5em'}}>
                                 <span role="img"
                                       aria-label="cloud-upload"
                                       className="anticon anticon-cloud-upload">

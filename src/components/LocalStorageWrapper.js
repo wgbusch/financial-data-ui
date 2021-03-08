@@ -39,7 +39,7 @@ export class LocalStorageWrapper {
         }
 
         const existingNames = this.getWatchlistsNames();
-        if (!(name in existingNames)) {
+        if (name && name.match('^[a-zA-Z0-9 ]{1,20}$') && !existingNames.includes(name)) {
             let newWatchlist = name + ':'
             content.forEach(ticker => newWatchlist + '\'' + ticker + '\' ')
             newWatchlist.trimEnd()
@@ -83,6 +83,8 @@ export class LocalStorageWrapper {
     deleteWatchlist(name) {
         const localStorage = window.localStorage;
         const watchlists = localStorage.getItem(this.WATCHLISTS).split(',');
+
+        const currentWatchlist = this.getCurrentWatchlist();
         let newWatchlist = '';
         watchlists.forEach(watchlist => {
             let currentName = watchlist.split(':')[0];
@@ -90,6 +92,17 @@ export class LocalStorageWrapper {
                 newWatchlist += watchlist + ',';
             }
         });
-        localStorage.setItem(this.WATCHLISTS, newWatchlist)
+        localStorage.setItem(this.WATCHLISTS, newWatchlist);
+        if (currentWatchlist === name) {
+            this.resetCurrentWatchlist();
+            return 'default';
+        } else{
+            return currentWatchlist;
+        }
+    }
+
+    setCurrentWatchlist(name) {
+        const localStorage = window.localStorage;
+        localStorage.setItem(this.CURRENT_WATCHLIST, name);
     }
 }
