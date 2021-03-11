@@ -16,6 +16,8 @@ export default class ParentGrid extends React.Component {
 
     BACKEND = {
         marketOverview: process.env.REACT_APP_BACKEND + 'market-overview/?start=0&end=100',
+        tickers: process.env.REACT_APP_BACKEND + '?tickers=',
+
     }
 
     constructor(props) {
@@ -72,11 +74,11 @@ export default class ParentGrid extends React.Component {
         const currentWatchlist = localStorage.getCurrentWatchlist();
         this.setState({watchlist: currentWatchlist});
 
-        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).concat(',');
+        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
 
         httpRequest.open(
             'GET',
-            this.BACKEND['marketOverview'] //+ watchlistContent
+            this.BACKEND['tickers'] + watchlistContent
         );
         httpRequest.send();
         httpRequest.onreadystatechange = () => {

@@ -13,8 +13,15 @@ function Watchlists({getCurrentWatchlist}) {
 
     const handleDeleteWatchlist = (name) => {
         let local = new LocalStorageWrapper();
-        const currentWatchlist = local.deleteWatchlist(name);
-        getCurrentWatchlist(currentWatchlist);
+        if (name !== local.DEFAULT_WATCHLIST) {
+            const currentWatchlist = local.deleteWatchlist(name);
+            getCurrentWatchlist(currentWatchlist);
+        } else {
+            Modal.error({
+                content: 'Can\'t delete default watchlist.',
+                zIndex: 2000,
+            });
+        }
     }
 
     const handleSelectWatchlist = (name) => {
@@ -72,8 +79,67 @@ function Watchlists({getCurrentWatchlist}) {
         setAddVisible(false);
     };
 
-    const handleAddWatchlist = () => {
+    const handleFailedAddWatchlist = (props) => {
         setAddVisible(true);
+    }
+
+    const handleClickSubmit = () => {
+        const hasErrors = form.getFieldsError().filter((field) => field.errors.length > 0).length > 0;
+        if (!hasErrors) {
+            form.submit();
+        }
+    }
+
+    const handleAddWatchlist = () => {
+
+        const content =
+            <Form
+                form={form}
+                name="basic"
+                initialValues={{remember: false}}
+                onFinish={handleOk}
+                onFinishFailed={handleFailedAddWatchlist}
+            >
+                <Form.Item
+                    label="Watchlist name"
+                    name="watchlistname"
+                    autocomplete={false}
+                    preserve={false}
+                    rules={[{
+                        required: true,
+                        type: 'string'
+                    },
+                        () => ({
+                            validator(rule, value) {
+                                return new Promise((resolve, reject) => {
+                                    const local = new LocalStorageWrapper();
+                                    const watchlists = local.getWatchlistsNames();
+
+                                    if (watchlists.includes(value)) {
+                                        reject("Watchlist already exists");
+                                    } else if (value && value.length > 20) {
+                                        reject("Maximum of 20 characters allowed.")
+                                    } else {
+                                        resolve();
+                                    }
+                                });
+                            }
+                        })
+                    ]}
+                >
+                    <Input/>
+                </Form.Item>
+            </Form>;
+
+        Modal.info({
+            title: "New watchlist",
+            zIndex: 2000,
+            onOk: handleClickSubmit,
+            onCancel: handleCancel,
+            content: content,
+            closable: true,
+            keyboard: true,
+        });
     }
 
     const handleCancel = () => {
@@ -95,48 +161,6 @@ function Watchlists({getCurrentWatchlist}) {
                     </span>
                 }>
                 </Dropdown.Button>
-
-                <Modal
-                    title="New watchlist"
-                    visible={addVisible}
-                    onOk={form.submit}
-                    onCancel={handleCancel}
-                >
-                    <Form
-                        form={form}
-                        name="basic"
-                        initialValues={{remember: false}}
-                        onFinish={handleOk}
-                    >
-                        <Form.Item
-                            label="Watchlist name"
-                            name="watchlistname"
-                            rules={[{
-                                required: true,
-                                type: 'string'
-                            },
-                                () => ({
-                                    validator(rule, value) {
-                                        return new Promise((resolve, reject) => {
-                                            const local = new LocalStorageWrapper();
-                                            const watchlists = local.getWatchlistsNames();
-
-                                            if (watchlists.includes(value)) {
-                                                reject("Watchlist already exists");
-                                            } else if (value && value.length > 20) {
-                                                reject("Maximum of 20 characters allowed.")
-                                            } else {
-                                                resolve();
-                                            }
-                                        });
-                                    }
-                                })
-                            ]}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </Form>
-                </Modal>
             </div>
         </div>
     );
