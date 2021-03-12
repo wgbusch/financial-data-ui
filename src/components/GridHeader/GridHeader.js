@@ -38,19 +38,28 @@ export default class GridHeader extends React.Component {
 
         return (
             <div className={"grid-header"}>
-                <h3 className="ant-typography title">Market overview</h3>
-                <h5 style={{fontStyle: 'italic', display: 'inline-block'}}>{currentWatchlist}</h5>
-                <div className="actions">
-                    <button type="button" onClick={this.handleOnSaveViewClick}
-                            className="ant-btn ant-btn-link actions" style={{fontSize: '1.5em'}}>
+                <div style={{float: "left"}}>
+                    <h3 className="ant-typography title" style={{display: "block"}}>Market overview</h3>
+                    <h5 style={{fontStyle: 'italic', display: "block"}}>{currentWatchlist}</h5>
+                </div>
+
+                <div style={{float: "right"}}>
+                    <div style={{display: "inline", padding: "0.5em"}}>
+                        <button type="button" onClick={this.handleOnSaveViewClick}
+                                className="ant-btn ant-btn-link" style={{fontSize: '1.5em', display: "inline"}}>
                                 <span role="img"
                                       aria-label="cloud-upload"
                                       className="anticon anticon-cloud-upload">
                                     <SaveOutlined/>
                                     Save view
                                 </span>
-                    </button>
-                    <Watchlists getCurrentWatchlist={this.getCurrentWatchlist}/>
+                        </button>
+                    </div>
+                    <div className="ant-btn ant-btn-link"
+                         style={{display: "inline", fontSize: '1.5em', padding: "0.5em",width:'min-content'}}>
+                        <Watchlists getCurrentWatchlist={this.getCurrentWatchlist}/>
+                        Watchlists
+                    </div>
                 </div>
             </div>
         )

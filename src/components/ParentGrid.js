@@ -4,14 +4,11 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import React from 'react';
-import ResizePanel from "react-resize-panel";
-import Chart from "./Chart";
 import './ParentGrid.css';
 import {columnTypes} from "./columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
 import {LocalStorageWrapper} from "./LocalStorageWrapper";
-import dummyData from "./dummyData";
 import dummyResponse from "./dummyData";
 
 export default class ParentGrid extends React.Component {
@@ -27,7 +24,7 @@ export default class ParentGrid extends React.Component {
         this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
         this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
         this.getColumnState = this.getColumnState.bind(this);
-        // this.getCurrentWatchlist = this.getCurrentWatchlist.bind(this);
+        this.getCurrentWatchlist = this.getCurrentWatchlist.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -71,12 +68,12 @@ export default class ParentGrid extends React.Component {
                 }
             );
         };
-        //
-        // const localStorage = new LocalStorageWrapper();
-        // const currentWatchlist = localStorage.getCurrentWatchlist();
-        // this.setState({watchlist: currentWatchlist});
 
-        // const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
+        const localStorage = new LocalStorageWrapper();
+        const currentWatchlist = localStorage.getCurrentWatchlist();
+        this.setState({watchlist: currentWatchlist});
+
+        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
 
         httpRequest.open(
             'GET',
@@ -88,8 +85,7 @@ export default class ParentGrid extends React.Component {
                 if (httpRequest.status === 200) {
                     updateData(JSON.parse(httpRequest.responseText));
                 } else {
-                    const x = dummyResponse;
-                    updateData(x);
+                    updateData(dummyResponse);
                 }
             }
         };
@@ -110,8 +106,8 @@ export default class ParentGrid extends React.Component {
 
     render() {
         return (
-            <div className="ag-theme-alpine">
-                {/*<GridHeader getColumnState={this.getColumnState} getCurrentWatchlist={this.getCurrentWatchlist}/>*/}
+            <div className="ag-theme-alpine container">
+                <GridHeader getColumnState={this.getColumnState} getCurrentWatchlist={this.getCurrentWatchlist}/>
                 <AgGridReact
                     rowSelection={this.state.rowSelection}
                     rowData={this.state.rowData}
