@@ -11,11 +11,13 @@ import {columnTypes} from "./columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
 import {LocalStorageWrapper} from "./LocalStorageWrapper";
+import dummyData from "./dummyData";
+import dummyResponse from "./dummyData";
 
 export default class ParentGrid extends React.Component {
 
     BACKEND = {
-        marketOverview: process.env.REACT_APP_BACKEND + 'market-overview/?start=0&end=100',
+        marketOverview: process.env.REACT_APP_BACKEND + 'market-overview/?start=0&end=40',
         tickers: process.env.REACT_APP_BACKEND + '?tickers=',
 
     }
@@ -25,7 +27,7 @@ export default class ParentGrid extends React.Component {
         this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
         this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
         this.getColumnState = this.getColumnState.bind(this);
-        this.getCurrentWatchlist = this.getCurrentWatchlist.bind(this);
+        // this.getCurrentWatchlist = this.getCurrentWatchlist.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -69,21 +71,26 @@ export default class ParentGrid extends React.Component {
                 }
             );
         };
+        //
+        // const localStorage = new LocalStorageWrapper();
+        // const currentWatchlist = localStorage.getCurrentWatchlist();
+        // this.setState({watchlist: currentWatchlist});
 
-        const localStorage = new LocalStorageWrapper();
-        const currentWatchlist = localStorage.getCurrentWatchlist();
-        this.setState({watchlist: currentWatchlist});
-
-        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
+        // const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
 
         httpRequest.open(
             'GET',
-            this.BACKEND['tickers'] + watchlistContent
+            this.BACKEND['marketOverview']
         );
         httpRequest.send();
         httpRequest.onreadystatechange = () => {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                updateData(JSON.parse(httpRequest.responseText));
+            if (httpRequest.readyState === 4) {
+                if (httpRequest.status === 200) {
+                    updateData(JSON.parse(httpRequest.responseText));
+                } else {
+                    const x = dummyResponse;
+                    updateData(x);
+                }
             }
         };
     };
@@ -104,7 +111,7 @@ export default class ParentGrid extends React.Component {
     render() {
         return (
             <div className="ag-theme-alpine">
-                <GridHeader getColumnState={this.getColumnState} getCurrentWatchlist={this.getCurrentWatchlist}/>
+                {/*<GridHeader getColumnState={this.getColumnState} getCurrentWatchlist={this.getCurrentWatchlist}/>*/}
                 <AgGridReact
                     rowSelection={this.state.rowSelection}
                     rowData={this.state.rowData}
