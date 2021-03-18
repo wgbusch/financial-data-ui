@@ -12,7 +12,7 @@
     "ag-grid-community": "^25.0.1",
     "ag-grid-enterprise": "^25.0.1",
     "ag-grid-react": "^25.0.1",
-    "antd": "^4.13.1",
+    "antd": "^4.14.0",
     "plotly.js": "^1.58.4",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
