@@ -1,8 +1,7 @@
-import {Dropdown, Form, Input, Menu, Tooltip} from "antd";
+import {Dropdown, Form, Input, Menu, Tooltip, Modal} from "antd";
 import {CloseOutlined, PlusOutlined, SaveOutlined, UnorderedListOutlined} from "@ant-design/icons";
 import React from "react";
 import {LocalStorageWrapper} from "../LocalStorageWrapper";
-import Modal from "antd/es/modal/Modal";
 import './GridHeader.css'
 
 
