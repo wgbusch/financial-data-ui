@@ -13,7 +13,7 @@ function Watchlists({getCurrentWatchlist}) {
 
     const handleDeleteWatchlist = (name) => {
         let local = new LocalStorageWrapper();
-        if (name !== local.DEFAULT_WATCHLIST) {
+        if (name !== local.DEFAULT_WATCHLIST_NAME) {
             const currentWatchlist = local.deleteWatchlist(name);
             getCurrentWatchlist(currentWatchlist);
         } else {

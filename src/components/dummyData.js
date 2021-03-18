@@ -400,6 +400,7 @@ const dummyResponse = {
         "Name": "Acme United Corporation. Common Stock",
         "Is_ETF": "N"
     }],
+    "columns": ["Open","High","Low","Close","Volume","Symbol","Name","Is_ETF"],
     "columnDefs": [{"headerName": "Open", "field": "Open", "type": "decimalColumn"}, {
         "headerName": "High",
         "field": "High",

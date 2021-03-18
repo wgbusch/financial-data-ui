@@ -10,13 +10,13 @@ import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
 import {LocalStorageWrapper} from "./LocalStorageWrapper";
 import dummyResponse from "./dummyData";
+import columnsDef from "./GridHeader/columnsDef";
 
 export default class ParentGrid extends React.Component {
 
     BACKEND = {
         marketOverview: process.env.REACT_APP_BACKEND + 'market-overview/?start=0&end=40',
         tickers: process.env.REACT_APP_BACKEND + '?tickers=',
-
     }
 
     constructor(props) {
@@ -61,10 +61,19 @@ export default class ParentGrid extends React.Component {
 
         const httpRequest = new XMLHttpRequest();
         const updateData = (response) => {
+
+            const existingColumns = [];
+            if (response.columns != null) {
+                response.columns.forEach(colName => {
+                    existingColumns.push(columnsDef[colName.toLowerCase()])
+                });
+            }
+
+            const local = new LocalStorageWrapper();
             this.setState({
                     rowData: response.data,
-                    columnDefs: response.columnDefs,
-                    columnsState: JSON.parse(response.columnsState),
+                    columnDefs: existingColumns,
+                    columnsState: JSON.parse(local.getColumnsState()),
                 }
             );
         };
@@ -77,7 +86,7 @@ export default class ParentGrid extends React.Component {
 
         httpRequest.open(
             'GET',
-            this.BACKEND['marketOverview']
+            this.BACKEND['tickers'] + watchlistContent,
         );
         httpRequest.send();
         httpRequest.onreadystatechange = () => {

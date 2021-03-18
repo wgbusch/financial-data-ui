@@ -1,18 +1,21 @@
+import initialGridState from "./GridHeader/initialGridState";
+import columnsDef from "./GridHeader/columnsDef";
+
 export class LocalStorageWrapper {
 
-    WATCHLISTS = 'watchlists'
-    CURRENT_WATCHLIST = 'currentWatchlist'
-    DEFAULT_WATCHLIST = 'default';
+    WATCHLISTS_KEY = 'watchlists'
+    CURRENT_WATCHLIST_KEY = 'currentWatchlist'
+    DEFAULT_WATCHLIST_NAME = 'default';
+    INITIAL_WATCHLIST_CONTENT = 'AAPL GOOGL TSLA SPY IWM';
+    COLUMNS_STATE_KEY = 'columnsState';
+    COLUMNS_DEF_KEY = 'columnsDef';
 
     constructor() {
+        this.localStorage = window.localStorage;
     }
 
     getWatchlistsNames() {
-        const localStorage = window.localStorage;
-        if (!localStorage.getItem(this.WATCHLISTS)) {
-            localStorage.setItem(this.WATCHLISTS, 'default:AAPL GOOGL TSLA SPY IWM,')
-        }
-        const watchlists = localStorage.getItem(this.WATCHLISTS)
+        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
         const listOfWatchlists = watchlists.split(',')
         let watchlistsNames = []
         listOfWatchlists.forEach(watchlist => {
@@ -25,68 +28,48 @@ export class LocalStorageWrapper {
     }
 
     getCurrentWatchlist() {
-        const localStorage = window.localStorage;
-
-        if (!localStorage.getItem(this.CURRENT_WATCHLIST)) {
-            this.resetCurrentWatchlist();
-        }
-        return localStorage.getItem(this.CURRENT_WATCHLIST)
+        return this.localStorage.getItem(this.CURRENT_WATCHLIST_KEY)
     }
 
     addWatchlist(name, content = []) {
-        const localStorage = window.localStorage;
-        if (!localStorage.getItem(this.WATCHLISTS)) {
-            localStorage.setItem(this.WATCHLISTS, 'default:AAPL GOOGL TSLA SPY IWM,')
-        }
-
         const existingNames = this.getWatchlistsNames();
         if (name && name.match('^[a-zA-Z0-9 ]{1,20}$') && !existingNames.includes(name)) {
             let newWatchlist = name + ':'
             content.forEach(ticker => newWatchlist + ticker + ' ')
             newWatchlist.trimEnd()
             newWatchlist += ','
-            localStorage.setItem(this.WATCHLISTS, localStorage.getItem('watchlists') + newWatchlist)
+            this.localStorage.setItem(this.WATCHLISTS_KEY, localStorage.getItem('watchlists') + newWatchlist)
         }
     }
 
     getWatchlistContent(name) {
-        const localStorage = window.localStorage;
-        const watchlists = localStorage.getItem(this.WATCHLISTS)
+        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
         const listOfWatchlists = watchlists.split(',')
         let watchlistContent = [];
         listOfWatchlists.forEach(watchlist => {
             let currentName = watchlist.split(':')[0];
             if (currentName === name) {
-                    watchlistContent = watchlist.split(':')[1].split(' ');
+                watchlistContent = watchlist.split(':')[1].split(' ');
             }
         })
         return watchlistContent
     }
 
     setUp() {
-        const localStorage = window.localStorage;
-        if (!localStorage.getItem(this.WATCHLISTS)) {
-            localStorage.setItem(this.WATCHLISTS, 'default:\'AAPL\' \'GOOGL\' \'TSLA\' \'SPY\' \'IWM\',')
-        }
-        if (!localStorage.getItem(this.CURRENT_WATCHLIST)) {
-            localStorage.setItem(this.CURRENT_WATCHLIST, 'default')
-        }
-    }
+        this.__createWatchlistsStorage__();
+        this.__createCurrentWatchlistStorage__();
+        this.__createColumnsState__();
+   }
 
     resetCurrentWatchlist() {
-        const localStorage = window.localStorage;
-        localStorage.setItem(this.CURRENT_WATCHLIST, this.DEFAULT_WATCHLIST);
-        if (!localStorage.getItem(this.WATCHLISTS)) {
-            localStorage.setItem(this.WATCHLISTS, 'default:AAPL GOOGL TSLA SPY IWM,')
-        }
+        this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, this.DEFAULT_WATCHLIST_NAME);
     }
 
     deleteWatchlist(name) {
-        if(name === this.DEFAULT_WATCHLIST){
+        if (name === this.DEFAULT_WATCHLIST_NAME) {
             return -1;
         }
-        const localStorage = window.localStorage;
-        const watchlists = localStorage.getItem(this.WATCHLISTS).split(',');
+        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY).split(',');
 
         const currentWatchlist = this.getCurrentWatchlist();
         let newWatchlist = '';
@@ -96,17 +79,43 @@ export class LocalStorageWrapper {
                 newWatchlist += watchlist + ',';
             }
         });
-        localStorage.setItem(this.WATCHLISTS, newWatchlist);
+        this.localStorage.setItem(this.WATCHLISTS_KEY, newWatchlist);
         if (currentWatchlist === name) {
             this.resetCurrentWatchlist();
-            return this.DEFAULT_WATCHLIST;
-        } else{
+            return this.DEFAULT_WATCHLIST_NAME;
+        } else {
             return currentWatchlist;
         }
     }
 
     setCurrentWatchlist(name) {
-        const localStorage = window.localStorage;
-        localStorage.setItem(this.CURRENT_WATCHLIST, name);
+        this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, name);
+    }
+
+    setColumnsState(state) {
+        this.localStorage.setItem(this.COLUMNS_STATE_KEY, state);
+
+    }
+
+    getColumnsState() {
+        return this.localStorage.getItem(this.COLUMNS_STATE_KEY);
+    }
+
+    __createWatchlistsStorage__() {
+        if (!this.localStorage.getItem(this.WATCHLISTS_KEY)) {
+            this.localStorage.setItem(this.WATCHLISTS_KEY, this.DEFAULT_WATCHLIST_NAME + ':' + this.INITIAL_WATCHLIST_CONTENT + ',')
+        }
+    }
+
+    __createCurrentWatchlistStorage__() {
+        if (!this.localStorage.getItem(this.CURRENT_WATCHLIST_KEY)) {
+            this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, this.DEFAULT_WATCHLIST_NAME)
+        }
+    }
+
+    __createColumnsState__() {
+        if (!this.localStorage.getItem(this.COLUMNS_STATE_KEY)) {
+            this.localStorage.setItem(this.COLUMNS_STATE_KEY, JSON.stringify(initialGridState))
+        }
     }
 }

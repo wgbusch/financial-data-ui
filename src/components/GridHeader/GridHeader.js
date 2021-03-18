@@ -19,17 +19,13 @@ export default class GridHeader extends React.Component {
 
     getCurrentWatchlist = (currentWatchlist) => {
         this.setState({watchlist: currentWatchlist});
+        this.props.getCurrentWatchlist(currentWatchlist);
     }
 
     handleOnSaveViewClick() {
         let state = this.props.getColumnState();
-        const httpRequest = new XMLHttpRequest();
-        httpRequest.open(
-            'POST',
-            process.env.REACT_APP_BACKEND + 'columns-state/',
-        );
-        httpRequest.setRequestHeader("Content-Type", "application/json");
-        httpRequest.send(JSON.stringify(state));
+        const local = new LocalStorageWrapper();
+        local.setColumnsState(JSON.stringify(state));
     }
 
 
