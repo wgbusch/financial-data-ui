@@ -5,12 +5,14 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import React from 'react';
 import './ParentGrid.css';
-import {columnTypes} from "./columnTypes";
+import {columnTypes} from "../columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
-import {LocalStorageWrapper} from "./LocalStorageWrapper";
-import dummyResponse from "./dummyData";
-import columnsDef from "./GridHeader/columnsDef";
+import {LocalStorageWrapper} from "../Common/LocalStorageWrapper";
+import dummyResponse from "../dummyData";
+import columnsDef from "../columnsDef";
+import {fetchQuotes} from "../Common/Hooks";
+import dummyData from "../dummyData";
 
 export default class ParentGrid extends React.Component {
 
@@ -24,7 +26,7 @@ export default class ParentGrid extends React.Component {
         this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
         this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
         this.getColumnState = this.getColumnState.bind(this);
-        this.getCurrentWatchlist = this.getCurrentWatchlist.bind(this);
+        this.setCurrentWatchlist = this.setCurrentWatchlist.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -109,14 +111,26 @@ export default class ParentGrid extends React.Component {
         return this.gridColumnApi.getColumnState();
     }
 
-    getCurrentWatchlist = (currentWatchlist) => {
+    setCurrentWatchlist = (currentWatchlist) => {
         this.setState({watchlist: currentWatchlist});
+        const localStorage = new LocalStorageWrapper();
+
+        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
+
+        const callback = (httpRequest) => {
+            const response = JSON.parse(httpRequest.responseText);
+            this.setState({
+                rowData: response.data
+            });
+        };
+        fetchQuotes(watchlistContent, callback, JSON.stringify(dummyData));
     }
 
     render() {
         return (
             <div className="ag-theme-alpine container">
-                <GridHeader getColumnState={this.getColumnState} getCurrentWatchlist={this.getCurrentWatchlist}/>
+                <GridHeader watchlist={this.state.watchlist} getColumnState={this.getColumnState}
+                            setCurrentWatchlist={this.setCurrentWatchlist}/>
                 <AgGridReact
                     rowSelection={this.state.rowSelection}
                     rowData={this.state.rowData}

@@ -4,7 +4,7 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import React from 'react';
-import {columnTypes} from "../columnTypes";
+import {columnTypes} from "../../columnTypes";
 import './DetailGrid.css'
 import buyOrWriteCellMainRenderer from "./buyOrWriteCellMainRenderer";
 import BuyOrWriteCellOptionRenderer from "./BuyOrWriteCellOptionRenderer";

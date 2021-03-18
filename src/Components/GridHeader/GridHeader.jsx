@@ -2,24 +2,18 @@ import React from "react";
 import 'antd/dist/antd.css'
 import {SaveOutlined} from "@ant-design/icons";
 import './GridHeader.css'
-import {LocalStorageWrapper} from "../LocalStorageWrapper";
+import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
 import Watchlists from "./Watchlists";
 
 export default class GridHeader extends React.Component {
 
     constructor(props) {
         super(props);
-
-        let local = new LocalStorageWrapper();
-        this.state = {
-            watchlist: local.getCurrentWatchlist(),
-        }
         this.handleOnSaveViewClick = this.handleOnSaveViewClick.bind(this);
     }
 
-    getCurrentWatchlist = (currentWatchlist) => {
-        this.setState({watchlist: currentWatchlist});
-        this.props.getCurrentWatchlist(currentWatchlist);
+    setCurrentWatchlist = (currentWatchlist) => {
+        this.props.setCurrentWatchlist(currentWatchlist);
     }
 
     handleOnSaveViewClick() {
@@ -28,10 +22,8 @@ export default class GridHeader extends React.Component {
         local.setColumnsState(JSON.stringify(state));
     }
 
-
     render() {
-        const currentWatchlist = this.state.watchlist;
-
+        const currentWatchlist = this.props.watchlist;
         return (
             <div className={"grid-header"}>
                 <div style={{float: "left"}}>
@@ -52,8 +44,8 @@ export default class GridHeader extends React.Component {
                         </button>
                     </div>
                     <div className="ant-btn ant-btn-link"
-                         style={{display: "inline", fontSize: '1.5em', padding: "0.5em",width:'min-content'}}>
-                        <Watchlists getCurrentWatchlist={this.getCurrentWatchlist}/>
+                         style={{display: "inline", fontSize: '1.5em', padding: "0.5em", width: 'min-content'}}>
+                        <Watchlists setCurrentWatchlist={this.setCurrentWatchlist}/>
                         Watchlists
                     </div>
                 </div>

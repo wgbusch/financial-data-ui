@@ -1,5 +1,4 @@
-import initialGridState from "./GridHeader/initialGridState";
-import columnsDef from "./GridHeader/columnsDef";
+import initialGridState from "../Components/GridHeader/initialGridState";
 
 export class LocalStorageWrapper {
 
@@ -8,7 +7,6 @@ export class LocalStorageWrapper {
     DEFAULT_WATCHLIST_NAME = 'default';
     INITIAL_WATCHLIST_CONTENT = 'AAPL GOOGL TSLA SPY IWM';
     COLUMNS_STATE_KEY = 'columnsState';
-    COLUMNS_DEF_KEY = 'columnsDef';
 
     constructor() {
         this.localStorage = window.localStorage;
@@ -59,7 +57,7 @@ export class LocalStorageWrapper {
         this.__createWatchlistsStorage__();
         this.__createCurrentWatchlistStorage__();
         this.__createColumnsState__();
-   }
+    }
 
     resetCurrentWatchlist() {
         this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, this.DEFAULT_WATCHLIST_NAME);

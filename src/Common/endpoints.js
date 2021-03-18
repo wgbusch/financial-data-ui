@@ -1,0 +1,1 @@
+export const tickers= process.env.REACT_APP_BACKEND + '?tickers=';

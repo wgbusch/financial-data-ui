@@ -1,7 +1,7 @@
 import './App.css';
 import React from 'react';
-import ParentGrid from "./components/ParentGrid";
-import {LocalStorageWrapper} from "./components/LocalStorageWrapper";
+import ParentGrid from "./Components/ParentGrid";
+import {LocalStorageWrapper} from "./Common/LocalStorageWrapper";
 
 class App extends React.Component {
 

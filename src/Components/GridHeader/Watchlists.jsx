@@ -1,20 +1,19 @@
 import {Dropdown, Form, Input, Menu, Tooltip, Modal} from "antd";
-import {CloseOutlined, PlusOutlined, SaveOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
 import React from "react";
-import {LocalStorageWrapper} from "../LocalStorageWrapper";
+import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
 import './GridHeader.css'
 
 
-function Watchlists({getCurrentWatchlist}) {
+function Watchlists({setCurrentWatchlist}) {
 
-    const [addVisible, setAddVisible] = React.useState(false);
     const [form] = Form.useForm();
 
     const handleDeleteWatchlist = (name) => {
         let local = new LocalStorageWrapper();
         if (name !== local.DEFAULT_WATCHLIST_NAME) {
             const currentWatchlist = local.deleteWatchlist(name);
-            getCurrentWatchlist(currentWatchlist);
+            setCurrentWatchlist(currentWatchlist);
         } else {
             Modal.error({
                 content: 'Can\'t delete default watchlist.',
@@ -26,17 +25,18 @@ function Watchlists({getCurrentWatchlist}) {
     const handleSelectWatchlist = (name) => {
         const local = new LocalStorageWrapper();
         local.setCurrentWatchlist(name);
-        getCurrentWatchlist(name);
+        setCurrentWatchlist(name);
     }
 
-    const CustomMenuItem = (props) => {
+    const CustomMenuItem = ({tooltip, iconType, name, handleIconSelect, handleSelect, ...props}) => {
         const iconStyle = {backgroundColor: 'lightgrey', margin: '0.2em', height: 'min-content', alignSelf: 'center'};
         const onClickHandler = () => {
-            props.handleIconSelect(props.name);
+            handleIconSelect(name);
         };
+
         return (<div style={{display: 'flex', alignContent: 'space-around'}}>
-            <Tooltip title={props.tooltip}>
-                {props.iconType === 'add' ? <PlusOutlined
+            <Tooltip title={tooltip}>
+                {iconType === 'add' ? <PlusOutlined
                     onClick={onClickHandler}
                     style={iconStyle}
                 /> : <CloseOutlined
@@ -44,14 +44,15 @@ function Watchlists({getCurrentWatchlist}) {
                     style={iconStyle}
                 />}
             </Tooltip>
+
             <Menu.Item {...props}
                        style={{width: '100%'}}
                        enabled={"true"}
                        onClick={() => {
-                           props.handleSelect(props.name)
+                           handleSelect(name)
                        }}>
                 <a target="_blank" rel="noopener noreferrer">
-                    {props.name}
+                    {name}
                 </a>
             </Menu.Item>
         </div>)
@@ -75,11 +76,9 @@ function Watchlists({getCurrentWatchlist}) {
     const handleOk = ({watchlistname}) => {
         const local = new LocalStorageWrapper();
         local.addWatchlist(watchlistname);
-        setAddVisible(false);
     };
 
     const handleFailedAddWatchlist = (props) => {
-        setAddVisible(true);
     }
 
     const handleClickSubmit = () => {
@@ -142,16 +141,15 @@ function Watchlists({getCurrentWatchlist}) {
     }
 
     const handleCancel = () => {
-        setAddVisible(false);
     };
 
     return (
-            <Dropdown.Button overlay={getMenu} className="dropdown-btn"
-                             size={'small'}
-                             style={{backgroundColor:'transparent', alignSelf:'center'}}
-                             icon={<UnorderedListOutlined/>}
-            >
-            </Dropdown.Button>
+        <Dropdown.Button overlay={getMenu} className="dropdown-btn"
+                         size={'small'}
+                         style={{backgroundColor: 'transparent', alignSelf: 'center'}}
+                         icon={<UnorderedListOutlined/>}
+        >
+        </Dropdown.Button>
     );
 }
 
