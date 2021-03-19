@@ -10,8 +10,8 @@ const columnsDef = {
         "type": "decimalColumn"
     },
     "close": {
-        "headerName": "Close",
-        "field": "Close",
+        "headerName": "Previous close",
+        "field": "close",
         "type": "decimalColumn"
     },
     "date": {
