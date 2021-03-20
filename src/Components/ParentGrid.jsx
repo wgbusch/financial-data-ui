@@ -9,18 +9,11 @@ import {columnTypes} from "../columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
 import {LocalStorageWrapper} from "../Common/LocalStorageWrapper";
-import dummyResponse from "../dummyData";
+import dummyData from "../dummyData";
 import columnsDef from "../columnsDef";
 import {fetchQuotes} from "../Common/Hooks";
-import dummyData from "../dummyData";
 
 export default class ParentGrid extends React.Component {
-
-    BACKEND = {
-        marketOverview: process.env.REACT_APP_BACKEND + 'market-overview/?start=0&end=40',
-        tickers: process.env.REACT_APP_BACKEND + '?tickers=',
-    }
-
     constructor(props) {
         super(props);
         this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
@@ -61,9 +54,7 @@ export default class ParentGrid extends React.Component {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
 
-        const httpRequest = new XMLHttpRequest();
         const updateData = (response) => {
-
             const existingColumns = [];
             if (response.columns != null) {
                 response.columns.forEach(colName => {
@@ -88,20 +79,9 @@ export default class ParentGrid extends React.Component {
 
         const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
 
-        httpRequest.open(
-            'GET',
-            this.BACKEND['tickers'] + watchlistContent,
-        );
-        httpRequest.send();
-        httpRequest.onreadystatechange = () => {
-            if (httpRequest.readyState === 4) {
-                if (httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                } else {
-                    updateData(dummyResponse);
-                }
-            }
-        };
+        fetchQuotes(watchlistContent, (t) => {
+            updateData((JSON.parse(t.responseText)))
+        }, updateData);
     };
 
     handleOnSelectionChanged = () => {
@@ -115,17 +95,22 @@ export default class ParentGrid extends React.Component {
 
     setCurrentWatchlist = (currentWatchlist) => {
         this.setState({watchlist: currentWatchlist});
+        this.gridApi.showLoadingOverlay();
         const localStorage = new LocalStorageWrapper();
 
         const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
 
         const callback = (httpRequest) => {
+            this.gridApi.hideOverlay();
             const response = JSON.parse(httpRequest.responseText);
             this.setState({
                 rowData: response.data
             });
         };
-        fetchQuotes(watchlistContent, callback, JSON.stringify(dummyData));
+
+        fetchQuotes(watchlistContent, callback, (httpRequest) => {
+            this.setState({rowData: JSON.stringify(dummyData)});
+        });
     }
 
     render() {

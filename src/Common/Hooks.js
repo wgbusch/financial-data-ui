@@ -1,12 +1,12 @@
 import {tickers} from "./endpoints";
 
 
-export function fetchQuotes(quotes, callback, fallback){
+export function fetchQuotes(tickersToFetch, callback, fallback){
 
     const httpRequest = new XMLHttpRequest();
     httpRequest.open(
         'GET',
-        tickers + quotes,
+        tickers + tickersToFetch,
     );
     httpRequest.send();
     httpRequest.onreadystatechange = () => {

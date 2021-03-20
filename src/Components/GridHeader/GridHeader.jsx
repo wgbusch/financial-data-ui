@@ -4,6 +4,7 @@ import {SaveOutlined} from "@ant-design/icons";
 import './GridHeader.css'
 import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
 import Watchlists from "./Watchlists";
+import {toast} from "react-toastify";
 
 export default class GridHeader extends React.Component {
 
@@ -20,6 +21,7 @@ export default class GridHeader extends React.Component {
         let state = this.props.getColumnState();
         const local = new LocalStorageWrapper();
         local.setColumnsState(JSON.stringify(state));
+        toast.success("View saved.")
     }
 
     render() {

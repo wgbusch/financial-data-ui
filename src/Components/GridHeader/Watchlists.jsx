@@ -1,13 +1,83 @@
-import {Dropdown, Form, Input, Menu, Modal, Tooltip} from "antd";
+import {Dropdown, Form, Input, Menu, Modal, Radio, Tooltip} from "antd";
 import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
-import React from "react";
+import {toast} from "react-toastify";
+
+import React, {useState} from "react";
 import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
 import './GridHeader.css'
 
-
 function Watchlists({setCurrentWatchlist}) {
 
-    const [form] = Form.useForm();
+    const [visible, setVisible] = useState(false);
+
+    const CollectionCreateForm = ({visible, onCancel}) => {
+        const [form] = Form.useForm();
+        return (
+            <Modal
+                visible={visible}
+                title="New watchlist"
+                zIndex={2000}
+                okText="Create"
+                cancelText="Cancel"
+                closable={true}
+                keyboard={true}
+                onCancel={onCancel}
+                onOk={() => {
+                    form
+                        .validateFields()
+                        .then(({title}) => {
+                            form.resetFields();
+                            const local = new LocalStorageWrapper();
+                            local.addWatchlist(title);
+                            setVisible(false);
+                            toast.success('Watchlist created');
+                        })
+                        .catch((info) => {
+                            console.log('Validate Failed:', info);
+                        });
+                }}
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    name="form_in_modal"
+                    initialValues={{
+                        modifier: 'public',
+                    }}
+                >
+                    <Form.Item
+                        name="title"
+                        label="Title"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the title of watchlist.',
+                            },
+                            () => ({
+                                validator(rule, value) {
+                                    return new Promise((resolve, reject) => {
+                                        const local = new LocalStorageWrapper();
+                                        const watchlists = local.getWatchlistsNames();
+
+                                        if (watchlists.includes(value)) {
+                                            reject("Watchlist already exists.");
+                                        } else if (value && value.length > 20) {
+                                            reject("Maximum of 20 characters allowed.")
+                                        } else {
+                                            resolve();
+                                        }
+                                    });
+                                }
+                            })
+                        ]}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Form>
+            </Modal>
+        );
+    };
+
 
     const handleDeleteWatchlist = (name) => {
         let local = new LocalStorageWrapper();
@@ -73,83 +143,26 @@ function Watchlists({setCurrentWatchlist}) {
             </Menu>);
     }
 
-    const handleOk = ({watchlistname}) => {
-        const local = new LocalStorageWrapper();
-        local.addWatchlist(watchlistname);
-    };
-
-    const handleFailedAddWatchlist = (props) => {
-    }
-
-    const handleClickSubmit = () => {
-        const hasErrors = form.getFieldsError().filter((field) => field.errors.length > 0).length > 0;
-        if (!hasErrors) {
-            form.submit();
-        }
-    }
-
     const handleAddWatchlist = () => {
-
-        const content =
-            <Form
-                form={form}
-                name="basic"
-                initialValues={{remember: false}}
-                onFinish={handleOk}
-                onFinishFailed={handleFailedAddWatchlist}
-            >
-                <Form.Item
-                    label="Watchlist name"
-                    name="watchlistname"
-                    autocomplete={false}
-                    preserve={false}
-                    rules={[{
-                        required: true,
-                        type: 'string'
-                    },
-                        () => ({
-                            validator(rule, value) {
-                                return new Promise((resolve, reject) => {
-                                    const local = new LocalStorageWrapper();
-                                    const watchlists = local.getWatchlistsNames();
-
-                                    if (watchlists.includes(value)) {
-                                        reject("Watchlist already exists");
-                                    } else if (value && value.length > 20) {
-                                        reject("Maximum of 20 characters allowed.")
-                                    } else {
-                                        resolve();
-                                    }
-                                });
-                            }
-                        })
-                    ]}
-                >
-                    <Input/>
-                </Form.Item>
-            </Form>;
-
-        Modal.info({
-            title: "New watchlist",
-            zIndex: 2000,
-            onOk: handleClickSubmit,
-            onCancel: handleCancel,
-            content: content,
-            closable: true,
-            keyboard: true,
-        });
+        setVisible(true);
     }
-
-    const handleCancel = () => {
-    };
 
     return (
-        <Dropdown.Button overlay={getMenu} className="ant-btn-link dropdown-btn"
-                         style={{display: 'inline'}}
-                         icon={<UnorderedListOutlined style={{alignSelf: 'center'}} className="ant-btn-link"/>}
-        >
-        </Dropdown.Button>
+        <>
+            <Dropdown.Button overlay={getMenu} className="ant-btn-link dropdown-btn"
+                             style={{display: 'inline'}}
+                             icon={<UnorderedListOutlined style={{alignSelf: 'center'}} className="ant-btn-link"/>}
+            >
+            </Dropdown.Button>
+            <CollectionCreateForm
+                visible={visible}
+                onCancel={() => {
+                    setVisible(false);
+                }}
+            />
+        </>
     );
 }
+
 
 export default Watchlists;
