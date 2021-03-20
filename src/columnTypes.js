@@ -28,12 +28,24 @@ export function columnTypes() {
     }
 
     let percentageFormatter = (params) => {
-        const percentage = parseFloat(params.value).toFixed(2);
+        let value;
+        if (params.value === Number(params.value)) {
+            value = params.value
+        } else {
+            value = params.value[0]
+        }
+        const percentage = (100 * parseFloat(value)).toFixed(2);
         return percentage + "%"
     };
 
     let percentageStyle = function (params) {
-        let number = parseFloat(params.value);
+        let value;
+        if (params.value === Number(params.value)) {
+            value = params.value
+        } else {
+            value = params.value[0]
+        }
+        let number = 100 * parseFloat(value);
         let style = {};
         if (number < -1) {
             style["color"] = 'red';

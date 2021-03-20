@@ -67,7 +67,9 @@ export default class ParentGrid extends React.Component {
             const existingColumns = [];
             if (response.columns != null) {
                 response.columns.forEach(colName => {
-                    existingColumns.push(columnsDef[colName.toLowerCase()])
+                    if (columnsDef[colName.toLowerCase()]) {
+                        existingColumns.push(columnsDef[colName.toLowerCase()])
+                    }
                 });
             }
 

@@ -9,6 +9,16 @@ const columnsDef = {
         "field": "bid",
         "type": "decimalColumn"
     },
+    "change ": {
+        "headerName": "Day change",
+        "field": "change",
+        "type": "changeColumn"
+    },
+    "change_percent": {
+        "headerName": "Day change %",
+        "field": "change_percent",
+        "type": "percentageColumn"
+    },
     "close": {
         "headerName": "Previous close",
         "field": "close",
@@ -87,7 +97,6 @@ const columnsDef = {
         "width": 110,
         "type": "integerColumn"
     },
-
 }
 
 

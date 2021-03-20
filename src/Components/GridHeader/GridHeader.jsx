@@ -37,6 +37,7 @@ export default class GridHeader extends React.Component {
                                 className="ant-btn ant-btn-link" style={{fontSize: '1.5em', display: "inline"}}>
                                 <span role="img"
                                       aria-label="cloud-upload"
+                                      style={{alignSelf: 'center'}}
                                       className="anticon anticon-cloud-upload">
                                     <SaveOutlined/>
                                     Save view
@@ -44,9 +45,11 @@ export default class GridHeader extends React.Component {
                         </button>
                     </div>
                     <div className="ant-btn ant-btn-link"
-                         style={{display: "inline", fontSize: '1.5em', padding: "0.5em", width: 'min-content'}}>
+                         style={{display: "inline", margin:'0 auto', fontSize: '1.5em', padding: "0.5em", width: 'min-content'}}>
                         <Watchlists setCurrentWatchlist={this.setCurrentWatchlist}/>
-                        Watchlists
+                        <div style={{alignSelf:'center',display:'inline'}}>
+                            Watchlists
+                        </div>
                     </div>
                 </div>
             </div>

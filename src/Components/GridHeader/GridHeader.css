@@ -10,10 +10,13 @@
 
 .dropdown-btn > .ant-dropdown-trigger {
     border: none;
+    background-color: transparent;
 }
 
-.dropdown-btn > .ant-dropdown-trigger > span {
-    background-color: transparent !important;
+.dropdown-btn > :not(.ant-dropdown-trigger){
+    padding: 0px;
+    border: none;
+    height: 0px;
 }
 
 .grid-header {

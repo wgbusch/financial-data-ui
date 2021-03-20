@@ -1,4 +1,4 @@
-import {Dropdown, Form, Input, Menu, Tooltip, Modal} from "antd";
+import {Dropdown, Form, Input, Menu, Modal, Tooltip} from "antd";
 import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
 import React from "react";
 import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
@@ -144,10 +144,9 @@ function Watchlists({setCurrentWatchlist}) {
     };
 
     return (
-        <Dropdown.Button overlay={getMenu} className="dropdown-btn"
-                         size={'small'}
-                         style={{backgroundColor: 'transparent', alignSelf: 'center'}}
-                         icon={<UnorderedListOutlined/>}
+        <Dropdown.Button overlay={getMenu} className="ant-btn-link dropdown-btn"
+                         style={{display: 'inline'}}
+                         icon={<UnorderedListOutlined style={{alignSelf: 'center'}} className="ant-btn-link"/>}
         >
         </Dropdown.Button>
     );
