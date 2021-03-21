@@ -47,7 +47,8 @@ const columnsDef = {
     "is_etf": {
         "headerName": "ETF?",
         "field": "is_etf",
-        "width": 90
+        "width": 90,
+        "type":"booleanColumn"
     },
     "long_name": {
         "headerName": "Name",

@@ -5,7 +5,7 @@ export class LocalStorageWrapper {
     WATCHLISTS_KEY = 'watchlists'
     CURRENT_WATCHLIST_KEY = 'currentWatchlist'
     DEFAULT_WATCHLIST_NAME = 'default';
-    INITIAL_WATCHLIST_CONTENT = 'AAPL GOOGL TSLA SPY IWM';
+    DEFAULT_WATCHLIST_VALUE = 'AAPL,GOOGL,TSLA,SPY,IWM';
     COLUMNS_STATE_KEY = 'columnsState';
 
     constructor() {
@@ -14,85 +14,60 @@ export class LocalStorageWrapper {
 
     getWatchlistsNames() {
         const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
-        const listOfWatchlists = watchlists.split(',')
-        let watchlistsNames = []
-        listOfWatchlists.forEach(watchlist => {
-            let name = watchlist.split(':')[0];
-            if (name) {
-                watchlistsNames.push(name);
-            }
-        })
-        return watchlistsNames
+        return watchlists.split(',').filter(Boolean);
     }
 
-    addWatchlist(name, content = []) {
+    addWatchlist(name) {
         const existingNames = this.getWatchlistsNames();
         if (name && name.match('^[a-zA-Z0-9 ]{1,20}$') && !existingNames.includes(name)) {
-            let newWatchlist = name + ':'
-            content.forEach(ticker => newWatchlist + ticker + ' ')
-            newWatchlist.trimEnd()
-            newWatchlist += ','
-            this.localStorage.setItem(this.WATCHLISTS_KEY, localStorage.getItem('watchlists') + newWatchlist)
+            if (this.localStorage.getItem(name)) return
+            this.localStorage.setItem(name, '')
+            const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
+            this.localStorage.setItem(this.WATCHLISTS_KEY, `${watchlists}${name},`)
         }
     }
 
-    updateWatchlist(watchlistName, symbol) {
-        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY);
-        const listOfWatchlists = watchlists.split(',');
-        let watchlistContent = [];
-        listOfWatchlists.forEach(watchlist => {
-            let currentName = watchlist.split(':')[0];
-            if (currentName === watchlistName) {
-                watchlistContent = watchlist.split(':')[1].split(' ');
-                this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, `${watchlistContent} ${symbol}`);
-            }
-
-            // if (currentName === name) {
-            //     watchlistContent = watchlist.split(':')[1].split(' ');
-            // }
-        })
-        return watchlistContent;
+    updateCurrentWatchlist(symbol) {
+        const currentWatchlist = this.getCurrentWatchlist();
+        const content = this.localStorage.getItem(currentWatchlist);
+        const newContent = content ? `${content},${symbol}` : symbol;
+        this.localStorage.setItem(currentWatchlist, newContent);
+        return newContent.split(',').filter(Boolean);
     }
 
-    deleteWatchlist(name) {
-        if (name === this.DEFAULT_WATCHLIST_NAME) {
-            return -1;
-        }
-        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY).split(',');
+    deleteWatchlist(watchlistToDelete) {
+        if (!watchlistToDelete || watchlistToDelete === this.DEFAULT_WATCHLIST_NAME) return -1;
 
         const currentWatchlist = this.getCurrentWatchlist();
-        let newWatchlist = '';
+        let newListOfWatchlists = '';
+        const watchlists = this.getWatchlistsNames();
         watchlists.forEach(watchlist => {
-            let currentName = watchlist.split(':')[0];
-            if (currentName && currentName !== name) {
-                newWatchlist += watchlist + ',';
+            if (watchlist && watchlist !== watchlistToDelete) {
+                newListOfWatchlists += watchlist + ',';
             }
         });
-        this.localStorage.setItem(this.WATCHLISTS_KEY, newWatchlist);
-        if (currentWatchlist === name) {
+
+        this.localStorage.setItem(this.WATCHLISTS_KEY, newListOfWatchlists);
+
+        this.localStorage.removeItem(watchlistToDelete);
+
+        if (currentWatchlist === watchlistToDelete) {
             this.resetCurrentWatchlist();
             return this.DEFAULT_WATCHLIST_NAME;
-        } else {
-            return currentWatchlist;
         }
+        return currentWatchlist;
     }
 
     getWatchlistContent(name) {
-        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
-        const listOfWatchlists = watchlists.split(',')
-        let watchlistContent = [];
-        listOfWatchlists.forEach(watchlist => {
-            let currentName = watchlist.split(':')[0];
-            if (currentName === name) {
-                watchlistContent = watchlist.split(':')[1].split(' ');
-            }
-        })
-        return watchlistContent
+        const watchlists = this.getWatchlistsNames();
+        if (!watchlists.includes(name)) return;
+        return this.localStorage.getItem(name).split(',').filter(Boolean);
     }
 
     setUp() {
         this.__createWatchlistsStorage__();
         this.__createCurrentWatchlistStorage__();
+        this.__createDefaultWatchlist__();
         this.__createColumnsState__();
     }
 
@@ -119,7 +94,7 @@ export class LocalStorageWrapper {
 
     __createWatchlistsStorage__() {
         if (!this.localStorage.getItem(this.WATCHLISTS_KEY)) {
-            this.localStorage.setItem(this.WATCHLISTS_KEY, this.DEFAULT_WATCHLIST_NAME + ':' + this.INITIAL_WATCHLIST_CONTENT + ',')
+            this.localStorage.setItem(this.WATCHLISTS_KEY, `${this.DEFAULT_WATCHLIST_NAME},`)
         }
     }
 
@@ -133,5 +108,9 @@ export class LocalStorageWrapper {
         if (!this.localStorage.getItem(this.COLUMNS_STATE_KEY)) {
             this.localStorage.setItem(this.COLUMNS_STATE_KEY, JSON.stringify(initialGridState))
         }
+    }
+
+    __createDefaultWatchlist__() {
+        this.localStorage.setItem(this.DEFAULT_WATCHLIST_NAME, this.DEFAULT_WATCHLIST_VALUE);
     }
 }

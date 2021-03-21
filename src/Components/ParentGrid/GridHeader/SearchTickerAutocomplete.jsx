@@ -1,6 +1,7 @@
 import {AutoComplete, Input} from "antd";
 import React, {useState} from "react";
 import {searchTicker} from "../../../Common/Hooks";
+import {LocalStorageWrapper} from "../../../Common/LocalStorageWrapper";
 
 
 export default function SearchTickerAutocomplete() {
@@ -52,20 +53,20 @@ export default function SearchTickerAutocomplete() {
     }
 
     function handleSelection(value) {
-
-
+        const local = new LocalStorageWrapper();
+        local.updateCurrentWatchlist(value);
     }
 
     return (<>
-                <AutoComplete
-                    dropdownClassName="certain-category-search-dropdown"
-                    dropdownMatchSelectWidth={500}
-                    style={{width: 250,}}
-                    options={options}
-                    onChange={handleInput}
-                    onSelect={handleSelection}
-                >
-                    <Input.Search size="large" placeholder="A ticker. Eg. AAPL"/>
-                </AutoComplete>
-            </>);
+        <AutoComplete
+            dropdownClassName="certain-category-search-dropdown"
+            dropdownMatchSelectWidth={500}
+            style={{width: 250,}}
+            options={options}
+            onChange={handleInput}
+            onSelect={handleSelection}
+        >
+            <Input.Search size="large" placeholder="A ticker. Eg. AAPL"/>
+        </AutoComplete>
+    </>);
 }

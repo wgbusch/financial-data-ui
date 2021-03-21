@@ -1,33 +1,30 @@
 export function columnTypes() {
 
 
-    let numberFormat = (value) => {
+    const numberFormat = (value) => {
         return new Intl.NumberFormat('en-US', {
             style: 'decimal'
         }).format(value);
     }
 
-    let decimalFormatter = (params) => {
-        let number = params.value;
-        if (isNaN(number)) {
-            return 'NaN';
-        } else {
-            return parseFloat(parseFloat(number).toFixed(3));
-        }
+    const decimalFormatter = (params) => {
+        const number = params.value;
+        if (!number) return '-';
+        return parseFloat(parseFloat(number).toFixed(3));
     }
 
-    let integerFormatter = (params) => {
-        let integer = params.value;
+    const integerFormatter = (params) => {
+        const integer = params.value;
         return numberFormat(integer);
     }
 
-    let unixTimeFormatter = (params) => {
+    const unixTimeFormatter = (params) => {
         const milliseconds = params.value;
         const dateObject = new Date(milliseconds);
         return dateObject.toLocaleString();
     }
 
-    let percentageFormatter = (params) => {
+    const percentageFormatter = (params) => {
         let value;
         if (params.value === Number(params.value)) {
             value = params.value
@@ -38,15 +35,15 @@ export function columnTypes() {
         return percentage + "%"
     };
 
-    let percentageStyle = function (params) {
+    const percentageStyle = function (params) {
         let value;
         if (params.value === Number(params.value)) {
             value = params.value
         } else {
             value = params.value[0]
         }
-        let number = 100 * parseFloat(value);
-        let style = {};
+        const number = 100 * parseFloat(value);
+        const style = {};
         if (number < -1) {
             style["color"] = 'red';
         } else if (number > 1) {
@@ -60,9 +57,9 @@ export function columnTypes() {
         return style;
     };
 
-    let changeStyle = function (params) {
-        let number = parseFloat(params.value);
-        let style = {};
+    const changeStyle = function (params) {
+        const number = parseFloat(params.value);
+        const style = {};
         if (number < 0) {
             style["color"] = 'red';
         } else if (number > 0) {
@@ -73,9 +70,20 @@ export function columnTypes() {
         return style;
     };
 
+    const booleanFormatter = function (params) {
+        if (params.value) return 'Y';
+        return 'N'
+    };
+
+    const booleanStyle = function () {
+        return {"fontWeight": "bold"};
+    };
+
     return {
         booleanColumn: {
             width: 80,
+            cellStyle: booleanStyle,
+            valueFormatter: booleanFormatter,
         },
         decimalColumn: {
             width: 107,
@@ -101,11 +109,10 @@ export function columnTypes() {
                 defaultToNothingSelected: true,
                 values: [],
                 comparator: function (a, b) {
-                    var valA = Date.parse(a);
-                    var valB = Date.parse(b);
+                    const valA = Date.parse(a);
+                    const valB = Date.parse(b);
 
                     if (valA === valB) return 0;
-
                     return valA > valB ? 1 : -1;
                 }
             }
