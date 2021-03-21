@@ -5,13 +5,13 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import React from 'react';
 import './ParentGrid.css';
-import {columnTypes} from "../columnTypes";
+import {columnTypes} from "../../Common/columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
-import {LocalStorageWrapper} from "../Common/LocalStorageWrapper";
-import dummyData from "../dummyData";
-import columnsDef from "../columnsDef";
-import {fetchQuotes} from "../Common/Hooks";
+import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
+import dummyData from "../../Common/dummyData";
+import columnsDef from "../../Common/columnsDef";
+import {fetchQuotes} from "../../Common/Hooks";
 
 export default class ParentGrid extends React.Component {
     constructor(props) {

@@ -2,9 +2,11 @@ import React from "react";
 import 'antd/dist/antd.css'
 import {SaveOutlined} from "@ant-design/icons";
 import './GridHeader.css'
-import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
+import {LocalStorageWrapper} from "../../../Common/LocalStorageWrapper";
 import Watchlists from "./Watchlists";
-import {toast} from "react-toastify";
+import {successNotification} from "../../ToastNotifications";
+import SearchTickerAutocomplete from "./SearchTickerAutocomplete";
+
 
 export default class GridHeader extends React.Component {
 
@@ -21,7 +23,7 @@ export default class GridHeader extends React.Component {
         let state = this.props.getColumnState();
         const local = new LocalStorageWrapper();
         local.setColumnsState(JSON.stringify(state));
-        toast.success("View saved.")
+        successNotification("View saved.")
     }
 
     render() {
@@ -34,6 +36,9 @@ export default class GridHeader extends React.Component {
                 </div>
 
                 <div style={{float: "right"}}>
+                    <div style = {{display: "inline", padding: "0.5em"}}>
+                        <SearchTickerAutocomplete/>
+                    </div>
                     <div style={{display: "inline", padding: "0.5em"}}>
                         <button type="button" onClick={this.handleOnSaveViewClick}
                                 className="ant-btn ant-btn-link" style={{fontSize: '1.5em', display: "inline"}}>

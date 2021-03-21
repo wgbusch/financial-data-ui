@@ -1,10 +1,7 @@
 import './App.css';
 import React from 'react';
-import ParentGrid from "./Components/ParentGrid";
+import ParentGrid from "./Components/ParentGrid/ParentGrid";
 import {LocalStorageWrapper} from "./Common/LocalStorageWrapper";
-import {toast, ToastContainer} from "react-toastify";
-import {Button} from "antd";
-import ToastCard from "./Components/ToastCard";
 
 class App extends React.Component {
 
@@ -20,7 +17,6 @@ class App extends React.Component {
         return (
             <div>
                 <ParentGrid/>
-                <ToastCard/>
             </div>
         );
     };

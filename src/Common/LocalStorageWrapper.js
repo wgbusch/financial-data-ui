@@ -1,4 +1,4 @@
-import initialGridState from "../Components/GridHeader/initialGridState";
+import initialGridState from "./initialGridState";
 
 export class LocalStorageWrapper {
 
@@ -25,10 +25,6 @@ export class LocalStorageWrapper {
         return watchlistsNames
     }
 
-    getCurrentWatchlist() {
-        return this.localStorage.getItem(this.CURRENT_WATCHLIST_KEY)
-    }
-
     addWatchlist(name, content = []) {
         const existingNames = this.getWatchlistsNames();
         if (name && name.match('^[a-zA-Z0-9 ]{1,20}$') && !existingNames.includes(name)) {
@@ -40,27 +36,22 @@ export class LocalStorageWrapper {
         }
     }
 
-    getWatchlistContent(name) {
-        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
-        const listOfWatchlists = watchlists.split(',')
+    updateWatchlist(watchlistName, symbol) {
+        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY);
+        const listOfWatchlists = watchlists.split(',');
         let watchlistContent = [];
         listOfWatchlists.forEach(watchlist => {
             let currentName = watchlist.split(':')[0];
-            if (currentName === name) {
+            if (currentName === watchlistName) {
                 watchlistContent = watchlist.split(':')[1].split(' ');
+                this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, `${watchlistContent} ${symbol}`);
             }
+
+            // if (currentName === name) {
+            //     watchlistContent = watchlist.split(':')[1].split(' ');
+            // }
         })
-        return watchlistContent
-    }
-
-    setUp() {
-        this.__createWatchlistsStorage__();
-        this.__createCurrentWatchlistStorage__();
-        this.__createColumnsState__();
-    }
-
-    resetCurrentWatchlist() {
-        this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, this.DEFAULT_WATCHLIST_NAME);
+        return watchlistContent;
     }
 
     deleteWatchlist(name) {
@@ -86,8 +77,35 @@ export class LocalStorageWrapper {
         }
     }
 
+    getWatchlistContent(name) {
+        const watchlists = this.localStorage.getItem(this.WATCHLISTS_KEY)
+        const listOfWatchlists = watchlists.split(',')
+        let watchlistContent = [];
+        listOfWatchlists.forEach(watchlist => {
+            let currentName = watchlist.split(':')[0];
+            if (currentName === name) {
+                watchlistContent = watchlist.split(':')[1].split(' ');
+            }
+        })
+        return watchlistContent
+    }
+
+    setUp() {
+        this.__createWatchlistsStorage__();
+        this.__createCurrentWatchlistStorage__();
+        this.__createColumnsState__();
+    }
+
+    getCurrentWatchlist() {
+        return this.localStorage.getItem(this.CURRENT_WATCHLIST_KEY)
+    }
+
     setCurrentWatchlist(name) {
         this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, name);
+    }
+
+    resetCurrentWatchlist() {
+        this.localStorage.setItem(this.CURRENT_WATCHLIST_KEY, this.DEFAULT_WATCHLIST_NAME);
     }
 
     setColumnsState(state) {

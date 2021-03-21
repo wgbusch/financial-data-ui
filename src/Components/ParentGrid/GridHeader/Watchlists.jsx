@@ -1,16 +1,15 @@
-import {Dropdown, Form, Input, Menu, Modal, Radio, Tooltip} from "antd";
+import {Dropdown, Form, Input, Menu, Modal, Tooltip} from "antd";
 import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
-import {toast} from "react-toastify";
-
 import React, {useState} from "react";
-import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
-import './GridHeader.css'
+import {LocalStorageWrapper} from "../../../Common/LocalStorageWrapper";
+// import './GridHeader.css'
+import {successNotification} from "../../ToastNotifications";
 
-function Watchlists({setCurrentWatchlist}) {
+export default function Watchlists({setCurrentWatchlist}) {
 
     const [visible, setVisible] = useState(false);
 
-    const CollectionCreateForm = ({visible, onCancel}) => {
+    const WatchlistDropdown = ({visible, onCancel}) => {
         const [form] = Form.useForm();
         return (
             <Modal
@@ -23,14 +22,13 @@ function Watchlists({setCurrentWatchlist}) {
                 keyboard={true}
                 onCancel={onCancel}
                 onOk={() => {
-                    form
-                        .validateFields()
+                    form.validateFields()
                         .then(({title}) => {
                             form.resetFields();
                             const local = new LocalStorageWrapper();
                             local.addWatchlist(title);
                             setVisible(false);
-                            toast.success('Watchlist created');
+                            successNotification('Watchlist created');
                         })
                         .catch((info) => {
                             console.log('Validate Failed:', info);
@@ -154,7 +152,7 @@ function Watchlists({setCurrentWatchlist}) {
                              icon={<UnorderedListOutlined style={{alignSelf: 'center'}} className="ant-btn-link"/>}
             >
             </Dropdown.Button>
-            <CollectionCreateForm
+            <WatchlistDropdown
                 visible={visible}
                 onCancel={() => {
                     setVisible(false);
@@ -163,6 +161,3 @@ function Watchlists({setCurrentWatchlist}) {
         </>
     );
 }
-
-
-export default Watchlists;
