@@ -1,14 +1,13 @@
 import './App.css';
 import React from 'react';
 import ParentGrid from "./Components/ParentGrid/ParentGrid";
-import {LocalStorageWrapper} from "./Common/LocalStorageWrapper";
+import { setUpLocalStorage} from "./Common/LocalStorageWrapper";
 
 class App extends React.Component {
 
     setUp() {
         if (typeof (Storage) !== "undefined") {
-            const local = new LocalStorageWrapper();
-            local.setUp();
+            setUpLocalStorage();
         }
     }
 

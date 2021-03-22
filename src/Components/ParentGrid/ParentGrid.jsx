@@ -8,18 +8,27 @@ import './ParentGrid.css';
 import {columnTypes} from "../../Common/columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
-import {LocalStorageWrapper} from "../../Common/LocalStorageWrapper";
-import dummyData from "../../Common/dummyData";
+import {
+    getColumnsState,
+    getCurrentWatchlist,
+    getCurrentWatchlistContent,
+    setColumnsState, setCurrentWatchlist, setCurrentWatchlist2,
+    updateCurrentWatchlist
+} from "../../Common/LocalStorageWrapper";
+import dummyQuotesData from "../../Common/dummyData/dummyQuotesData";
 import columnsDef from "../../Common/columnsDef";
 import {fetchQuotes} from "../../Common/Hooks";
+import {successNotification} from "../ToastNotifications";
 
 export default class ParentGrid extends React.Component {
+    countNum = 0;
+
     constructor(props) {
         super(props);
         this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
         this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
-        this.getColumnState = this.getColumnState.bind(this);
-        this.setCurrentWatchlist = this.setCurrentWatchlist.bind(this);
+        this.saveColumnsState = this.saveColumnsState.bind(this);
+        this.handleSelectWatchlist = this.handleSelectWatchlist.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -55,29 +64,28 @@ export default class ParentGrid extends React.Component {
         this.gridColumnApi = params.columnApi;
 
         const updateData = (response) => {
-            const existingColumns = [];
-            if (response.columns != null) {
+            let existingColumns = [];
+            if (response.columns) {
                 response.columns.forEach(colName => {
                     if (columnsDef[colName.toLowerCase()]) {
                         existingColumns.push(columnsDef[colName.toLowerCase()])
                     }
                 });
+            } else {
+                existingColumns = response.columns;
             }
 
-            const local = new LocalStorageWrapper();
+            const currentWatchlist = getCurrentWatchlist();
             this.setState({
                     rowData: response.data,
                     columnDefs: existingColumns,
-                    columnsState: JSON.parse(local.getColumnsState()),
+                    columnsState: JSON.parse(getColumnsState()),
+                    watchlist: currentWatchlist,
                 }
             );
         };
 
-        const localStorage = new LocalStorageWrapper();
-        const currentWatchlist = localStorage.getCurrentWatchlist();
-        this.setState({watchlist: currentWatchlist});
-
-        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
+        const watchlistContent = getCurrentWatchlistContent().join(',');
 
         fetchQuotes(watchlistContent, (t) => {
             updateData((JSON.parse(t.responseText)))
@@ -89,35 +97,42 @@ export default class ParentGrid extends React.Component {
         this.setState({displaySymbol: selectedRows.length === 1 ? selectedRows[0]["Symbol"] : this.state.displaySymbol})
     };
 
-    getColumnState = () => {
-        return this.gridColumnApi.getColumnState();
+    saveColumnsState = () => {
+        let state = this.gridColumnApi.getColumnState();
+        setColumnsState(JSON.stringify(state));
+        successNotification("View saved.");
     }
 
-    setCurrentWatchlist = (currentWatchlist) => {
-        this.setState({watchlist: currentWatchlist});
+    handleSelectWatchlist = (currentWatchlist) => {
+        setCurrentWatchlist(currentWatchlist);
         this.gridApi.showLoadingOverlay();
-        const localStorage = new LocalStorageWrapper();
-
-        const watchlistContent = localStorage.getWatchlistContent(currentWatchlist).join(',');
+        const watchlistContent = getCurrentWatchlistContent().join(',');
 
         const callback = (httpRequest) => {
             this.gridApi.hideOverlay();
-            const response = JSON.parse(httpRequest.responseText);
+
             this.setState({
-                rowData: response.data
+                rowData: JSON.parse(httpRequest.responseText).data,
+                watchlist: getCurrentWatchlist(),
             });
         };
-
         fetchQuotes(watchlistContent, callback, (httpRequest) => {
-            this.setState({rowData: JSON.stringify(dummyData)});
+            this.setState({rowData: JSON.stringify(dummyQuotesData)});
         });
     }
 
+    addTickerToWatchlist = (ticker) => {
+        updateCurrentWatchlist(ticker);
+    }
+
     render() {
+        this.countNum++;
+        console.log(this.countNum);
         return (
             <div className="ag-theme-alpine container">
-                <GridHeader watchlist={this.state.watchlist} getColumnState={this.getColumnState}
-                            setCurrentWatchlist={this.setCurrentWatchlist}/>
+                <GridHeader watchlist={this.state.watchlist} saveColumnsState={this.saveColumnsState}
+                            handleSelectWatchlist={this.handleSelectWatchlist}
+                            addTickerToWatchlist={this.addTickerToWatchlist}/>
                 <AgGridReact
                     rowSelection={this.state.rowSelection}
                     rowData={this.state.rowData}

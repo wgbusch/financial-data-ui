@@ -1,10 +1,10 @@
 import {AutoComplete, Input} from "antd";
 import React, {useState} from "react";
 import {searchTicker} from "../../../Common/Hooks";
-import {LocalStorageWrapper} from "../../../Common/LocalStorageWrapper";
+import dummySearchData from "../../../Common/dummyData/dummySearchData";
 
 
-export default function SearchTickerAutocomplete() {
+export default function SearchTickerAutocomplete({addTickerToWatchlist}) {
 
     const renderTitle = (title) => (
         <span>
@@ -35,26 +35,25 @@ export default function SearchTickerAutocomplete() {
     const [options, setOptions] = useState([]);
 
     function handleInput(value) {
+
+        const updateSearchResults = (response) => {
+            const foundTickers = JSON.parse(response.responseText);
+
+            const options = foundTickers.map((ticker) => {
+                return renderItem({symbol: ticker[0].toUpperCase()})
+            })
+            setOptions([{label: renderTitle('Stocks'), options: options}])
+        }
+
+
         if (value) {
             searchTicker(value, (response) => {
-                    const found_tickers = JSON.parse(response.responseText);
-
-                    let options = []
-                    options = found_tickers.map((ticker) => {
-                        return renderItem({symbol: ticker[0].toUpperCase()})
-                    })
-                    setOptions([{label: renderTitle('Stocks'), options: options}])
+                    updateSearchResults(response)
                 },
                 (response) => {
-                    setOptions([])
-                }
-            );
+                    updateSearchResults(dummySearchData)
+                });
         }
-    }
-
-    function handleSelection(value) {
-        const local = new LocalStorageWrapper();
-        local.updateCurrentWatchlist(value);
     }
 
     return (<>
@@ -64,7 +63,9 @@ export default function SearchTickerAutocomplete() {
             style={{width: 250,}}
             options={options}
             onChange={handleInput}
-            onSelect={handleSelection}
+            onSelect={(ticker) => {
+                addTickerToWatchlist(ticker);
+            }}
         >
             <Input.Search size="large" placeholder="A ticker. Eg. AAPL"/>
         </AutoComplete>

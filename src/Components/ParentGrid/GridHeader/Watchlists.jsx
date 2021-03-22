@@ -1,15 +1,19 @@
 import {Dropdown, Form, Input, Menu, Modal, Tooltip} from "antd";
 import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
 import React, {useState} from "react";
-import {LocalStorageWrapper} from "../../../Common/LocalStorageWrapper";
-// import './GridHeader.css'
+import {
+    addWatchlist,
+    DEFAULT_WATCHLIST_NAME,
+    deleteWatchlist,
+    getWatchlistsNames
+} from "../../../Common/LocalStorageWrapper";
 import {successNotification} from "../../ToastNotifications";
 
-export default function Watchlists({setCurrentWatchlist}) {
+export default function Watchlists({handleSelectWatchlist}) {
 
     const [visible, setVisible] = useState(false);
 
-    const WatchlistDropdown = ({visible, onCancel}) => {
+    const AddWatchlistModalForm = ({visible, onCancel}) => {
         const [form] = Form.useForm();
         return (
             <Modal
@@ -25,8 +29,7 @@ export default function Watchlists({setCurrentWatchlist}) {
                     form.validateFields()
                         .then(({title}) => {
                             form.resetFields();
-                            const local = new LocalStorageWrapper();
-                            local.addWatchlist(title);
+                            addWatchlist(title);
                             setVisible(false);
                             successNotification('Watchlist created');
                         })
@@ -54,8 +57,7 @@ export default function Watchlists({setCurrentWatchlist}) {
                             () => ({
                                 validator(rule, value) {
                                     return new Promise((resolve, reject) => {
-                                        const local = new LocalStorageWrapper();
-                                        const watchlists = local.getWatchlistsNames();
+                                        const watchlists = getWatchlistsNames();
 
                                         if (watchlists.includes(value)) {
                                             reject("Watchlist already exists.");
@@ -76,12 +78,10 @@ export default function Watchlists({setCurrentWatchlist}) {
         );
     };
 
-
     const handleDeleteWatchlist = (name) => {
-        let local = new LocalStorageWrapper();
-        if (name !== local.DEFAULT_WATCHLIST_NAME) {
-            const currentWatchlist = local.deleteWatchlist(name);
-            setCurrentWatchlist(currentWatchlist);
+        if (name !== DEFAULT_WATCHLIST_NAME) {
+            const currentWatchlist = deleteWatchlist(name);
+            handleSelectWatchlist(currentWatchlist);
         } else {
             Modal.error({
                 content: 'Can\'t delete default watchlist.',
@@ -90,54 +90,52 @@ export default function Watchlists({setCurrentWatchlist}) {
         }
     }
 
-    const handleSelectWatchlist = (name) => {
-        const local = new LocalStorageWrapper();
-        local.setCurrentWatchlist(name);
-        setCurrentWatchlist(name);
-    }
+    const WatchlistsMenu = () => {
+        const watchlists = getWatchlistsNames();
 
-    const CustomMenuItem = ({tooltip, iconType, name, handleIconSelect, handleSelect, ...props}) => {
-        const iconStyle = {backgroundColor: 'lightgrey', margin: '0.2em', height: 'min-content', alignSelf: 'center'};
-        const onClickHandler = () => {
-            handleIconSelect(name);
+        const WatchlistsMenuItem = ({tooltip, iconType, name, handleIconSelect, handleSelect, ...props}) => {
+            const iconStyle = {
+                backgroundColor: 'lightgrey',
+                margin: '0.2em',
+                height: 'min-content',
+                alignSelf: 'center'
+            };
+            const onClickHandler = () => {
+                handleIconSelect(name);
+            };
+
+            return (<div style={{display: 'flex', alignContent: 'space-around'}}>
+                <Tooltip title={tooltip}>
+                    {iconType === 'add' ? <PlusOutlined
+                        onClick={onClickHandler}
+                        style={iconStyle}
+                    /> : <CloseOutlined
+                        onClick={onClickHandler}
+                        style={iconStyle}
+                    />}
+                </Tooltip>
+
+                <Menu.Item {...props}
+                           style={{width: '100%'}}
+                           enabled={"true"}
+                           onClick={() => {
+                               handleSelect(name)
+                           }}>
+                    <a target="_blank" rel="noopener noreferrer">
+                        {name}
+                    </a>
+                </Menu.Item>
+            </div>)
         };
-
-        return (<div style={{display: 'flex', alignContent: 'space-around'}}>
-            <Tooltip title={tooltip}>
-                {iconType === 'add' ? <PlusOutlined
-                    onClick={onClickHandler}
-                    style={iconStyle}
-                /> : <CloseOutlined
-                    onClick={onClickHandler}
-                    style={iconStyle}
-                />}
-            </Tooltip>
-
-            <Menu.Item {...props}
-                       style={{width: '100%'}}
-                       enabled={"true"}
-                       onClick={() => {
-                           handleSelect(name)
-                       }}>
-                <a target="_blank" rel="noopener noreferrer">
-                    {name}
-                </a>
-            </Menu.Item>
-        </div>)
-    };
-
-    const getMenu = () => {
-        let local = new LocalStorageWrapper();
-        const watchlists = local.getWatchlistsNames();
 
         return (
             <Menu>
-                <CustomMenuItem name={'New watchlist'} key={0} handleSelect={handleAddWatchlist}
-                                handleIconSelect={handleAddWatchlist} tooltip={""} iconType='add'/>
+                <WatchlistsMenuItem name={'New watchlist'} key={0} handleSelect={handleAddWatchlist}
+                                    handleIconSelect={handleAddWatchlist} tooltip={""} iconType='add'/>
                 {watchlists.map((name, i) =>
-                    <CustomMenuItem name={name} key={i + 1} handleSelect={handleSelectWatchlist}
-                                    handleIconSelect={handleDeleteWatchlist} tooltip={"Delete watchlist"}
-                                    iconType='delete'/>)}
+                    <WatchlistsMenuItem name={name} key={i + 1} handleSelect={(name) =>{handleSelectWatchlist(name) }}
+                                        handleIconSelect={handleDeleteWatchlist} tooltip={"Delete watchlist"}
+                                        iconType='delete'/>)}
             </Menu>);
     }
 
@@ -147,12 +145,12 @@ export default function Watchlists({setCurrentWatchlist}) {
 
     return (
         <>
-            <Dropdown.Button overlay={getMenu} className="ant-btn-link dropdown-btn"
+            <Dropdown.Button overlay={WatchlistsMenu} className="ant-btn-link dropdown-btn"
                              style={{display: 'inline'}}
                              icon={<UnorderedListOutlined style={{alignSelf: 'center'}} className="ant-btn-link"/>}
             >
             </Dropdown.Button>
-            <WatchlistDropdown
+            <AddWatchlistModalForm
                 visible={visible}
                 onCancel={() => {
                     setVisible(false);

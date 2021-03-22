@@ -1,4 +1,5 @@
 import {search, tickers} from "./endpoints";
+import dummyQuotesData from "./dummyData/dummyQuotesData";
 
 
 export function fetchQuotes(tickersToFetch, callback, fallback) {
@@ -15,7 +16,7 @@ export function fetchQuotes(tickersToFetch, callback, fallback) {
             if (httpRequest.status === 200) {
                 callback(httpRequest);
             } else {
-                fallback(httpRequest);
+                fallback(dummyQuotesData);
             }
         }
     };
