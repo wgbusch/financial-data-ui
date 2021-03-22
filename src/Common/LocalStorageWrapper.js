@@ -30,11 +30,11 @@ export function addWatchlist(name)
     }
 }
 
-export function updateCurrentWatchlist(symbol)
+export function updateCurrentWatchlistWithNewTicker(ticker)
 {
     const currentWatchlist = getCurrentWatchlist();
     const content = localStorage.getItem(currentWatchlist);
-    const newContent = content ? `${content},${symbol}` : symbol;
+    const newContent = content ? `${content},${ticker}` : ticker;
     localStorage.setItem(currentWatchlist, newContent);
     return newContent.split(',').filter(Boolean);
 }

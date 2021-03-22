@@ -12,8 +12,9 @@ import {
     getColumnsState,
     getCurrentWatchlist,
     getCurrentWatchlistContent,
-    setColumnsState, setCurrentWatchlist, setCurrentWatchlist2,
-    updateCurrentWatchlist
+    setColumnsState,
+    setCurrentWatchlist,
+    updateCurrentWatchlistWithNewTicker
 } from "../../Common/LocalStorageWrapper";
 import dummyQuotesData from "../../Common/dummyData/dummyQuotesData";
 import columnsDef from "../../Common/columnsDef";
@@ -29,6 +30,7 @@ export default class ParentGrid extends React.Component {
         this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
         this.saveColumnsState = this.saveColumnsState.bind(this);
         this.handleSelectWatchlist = this.handleSelectWatchlist.bind(this);
+        this.showCurrentWatchlistTickers = this.showCurrentWatchlistTickers.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -105,6 +107,15 @@ export default class ParentGrid extends React.Component {
 
     handleSelectWatchlist = (currentWatchlist) => {
         setCurrentWatchlist(currentWatchlist);
+        this.showCurrentWatchlistTickers();
+    }
+
+    addTickerToWatchlist = (ticker) => {
+        updateCurrentWatchlistWithNewTicker(ticker);
+        this.showCurrentWatchlistTickers();
+    }
+
+    showCurrentWatchlistTickers = () => {
         this.gridApi.showLoadingOverlay();
         const watchlistContent = getCurrentWatchlistContent().join(',');
 
@@ -119,10 +130,6 @@ export default class ParentGrid extends React.Component {
         fetchQuotes(watchlistContent, callback, (httpRequest) => {
             this.setState({rowData: JSON.stringify(dummyQuotesData)});
         });
-    }
-
-    addTickerToWatchlist = (ticker) => {
-        updateCurrentWatchlist(ticker);
     }
 
     render() {
