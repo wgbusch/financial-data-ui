@@ -63,7 +63,6 @@ class App extends React.Component {
         const watchlistContent = getCurrentWatchlistContent().join(',');
 
         const callback = (httpRequest) => {
-
             this.setState({
                 rowData: JSON.parse(httpRequest.responseText).data,
                 watchlist: getCurrentWatchlist(),
@@ -122,7 +121,8 @@ class App extends React.Component {
                     handleChangeOfColumns={this.handleChangeOfColumns}
                     handleDeleteTickerFromWatchlist={this.handleDeleteTickerFromWatchlist}
                     rowData={this.state.rowData}
-                    columnDefs={this.state.columnDefs}/>
+                    columnDefs={this.state.columnDefs}
+                    loading={this.state.loading}/>
             </div>
         );
     };

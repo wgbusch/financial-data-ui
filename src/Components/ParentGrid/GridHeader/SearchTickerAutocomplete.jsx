@@ -42,6 +42,7 @@ export default function SearchTickerAutocomplete({addTickerToWatchlist}) {
             const options = foundTickers.map((ticker) => {
                 return renderItem({symbol: ticker[0].toUpperCase()})
             })
+
             setOptions([{label: renderTitle('Stocks'), options: options}])
         }
 

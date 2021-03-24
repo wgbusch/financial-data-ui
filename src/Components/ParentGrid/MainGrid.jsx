@@ -18,6 +18,7 @@ export default class MainGrid extends React.Component {
         this.handleOnGridReady = this.handleOnGridReady.bind(this);
         this.getContextMenuItems = this.getContextMenuItems.bind(this);
         this.handleDeleteTickerFromWatchlist = this.props.handleDeleteTickerFromWatchlist.bind(this);
+        this.handleRowDataChanged = this.handleRowDataChanged.bind(this);
         this.state = {
             defaultColDef: {
                 width: 100,
@@ -68,8 +69,16 @@ export default class MainGrid extends React.Component {
         ];
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("component did update");
+    }
+
     handleColumnChange = () => {
         this.props.handleChangeOfColumns(this.gridColumnApi.getColumnState());
+    }
+
+    handleRowDataChanged =() =>{
+        console.log("handle row data changed");
     }
 
     render() {
@@ -96,6 +105,7 @@ export default class MainGrid extends React.Component {
                     keepDetailRows={this.state.keepDetailRows}
                     columnTypes={this.state.columnTypes}
                     pagination={this.state.pagination}
+                    onRowDataChanged={this.handleRowDataChanged}
                 >
                 </AgGridReact>
             </>
