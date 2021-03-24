@@ -1,5 +1,6 @@
 import {Dropdown, Form, Input, Menu, Modal, Tooltip} from "antd";
 import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
+
 import React, {useState} from "react";
 import {
     addWatchlist,
@@ -95,7 +96,7 @@ export default function Watchlists({handleSelectWatchlist}) {
 
         const WatchlistsMenuItem = ({tooltip, iconType, name, handleIconSelect, handleSelect, ...props}) => {
             const iconStyle = {
-                backgroundColor: 'lightgrey',
+                backgroundColor: 'transparent',
                 margin: '0.2em',
                 height: 'min-content',
                 alignSelf: 'center'
@@ -133,11 +134,14 @@ export default function Watchlists({handleSelectWatchlist}) {
                 <WatchlistsMenuItem name={'New watchlist'} key={0} handleSelect={handleAddWatchlist}
                                     handleIconSelect={handleAddWatchlist} tooltip={""} iconType='add'/>
                 {watchlists.map((name, i) =>
-                    <WatchlistsMenuItem name={name} key={i + 1} handleSelect={(name) =>{handleSelectWatchlist(name) }}
+                    <WatchlistsMenuItem name={name} key={i + 1} handleSelect={(name) => {
+                        handleSelectWatchlist(name)
+                    }}
                                         handleIconSelect={handleDeleteWatchlist} tooltip={"Delete watchlist"}
                                         iconType='delete'/>)}
             </Menu>);
     }
+
 
     const handleAddWatchlist = () => {
         setVisible(true);
@@ -147,6 +151,8 @@ export default function Watchlists({handleSelectWatchlist}) {
         <>
             <Dropdown.Button overlay={WatchlistsMenu} className="ant-btn-link dropdown-btn"
                              style={{display: 'inline'}}
+                             tabIndex="0"
+                             size={"large"}
                              icon={<UnorderedListOutlined style={{alignSelf: 'center'}} className="ant-btn-link"/>}
             >
             </Dropdown.Button>

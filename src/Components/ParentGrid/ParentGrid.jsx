@@ -1,14 +1,15 @@
 import {AgGridReact} from "ag-grid-react";
 
 import 'ag-grid-enterprise';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-enterprise/dist/styles/ag-grid.css';
+import 'ag-grid-enterprise/dist/styles/ag-theme-alpine.css';
 import React from 'react';
 import './ParentGrid.css';
 import {columnTypes} from "../../Common/columnTypes";
 import DetailGrid from "./DetailGrid/DetailGrid";
 import GridHeader from "./GridHeader/GridHeader";
 import {
+    deleteTickerFromWatchlist,
     getColumnsState,
     getCurrentWatchlist,
     getCurrentWatchlistContent,
@@ -31,6 +32,7 @@ export default class ParentGrid extends React.Component {
         this.saveColumnsState = this.saveColumnsState.bind(this);
         this.handleSelectWatchlist = this.handleSelectWatchlist.bind(this);
         this.showCurrentWatchlistTickers = this.showCurrentWatchlistTickers.bind(this);
+        this.getContextMenuItems = this.getContextMenuItems.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -45,7 +47,6 @@ export default class ParentGrid extends React.Component {
             rowSelection: 'single',
             rowData: null,
             pagination: true,
-            view: 'all',
             keepDetailRows: true,
             detailRowHeight: 400,
             detailCellRenderer: 'detailGrid',
@@ -54,7 +55,7 @@ export default class ParentGrid extends React.Component {
         }
     }
 
-    handleFirstDataRendered = (params) => {
+    handleFirstDataRendered = () => {
         this.gridColumnApi.applyColumnState({
             state: this.state.columnsState,
             applyOrder: true,
@@ -127,10 +128,28 @@ export default class ParentGrid extends React.Component {
                 watchlist: getCurrentWatchlist(),
             });
         };
-        fetchQuotes(watchlistContent, callback, (httpRequest) => {
+        fetchQuotes(watchlistContent, callback, () => {
             this.setState({rowData: JSON.stringify(dummyQuotesData)});
         });
     }
+
+    getContextMenuItems = (params) => {
+        return [
+            {
+                name: 'Delete watchlist',
+                action: () => {
+                    const rowSelected = this.gridApi.getSelectedRows()[0];
+                    const ticker = rowSelected.symbol;
+                    deleteTickerFromWatchlist(ticker, this.state.watchlist);
+                    this.setState({rowData: this.state.rowData.filter(row => row.symbol !== ticker)});
+                },
+            },
+            'separator',
+            'copy',
+            'copyWithHeaders',
+            'export'
+        ];
+    };
 
     render() {
         this.countNum++;
@@ -151,6 +170,7 @@ export default class ParentGrid extends React.Component {
                     masterDetail={this.state.masterDetail}
                     detailRowHeight={this.state.detailRowHeight}
                     detailCellRenderer={this.state.detailCellRenderer}
+                    getContextMenuItems={this.getContextMenuItems}
                     frameworkComponents={this.state.frameworkComponents}
                     keepDetailRows={this.state.keepDetailRows}
                     columnTypes={this.state.columnTypes}

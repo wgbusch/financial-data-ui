@@ -8,11 +8,12 @@ import SearchTickerAutocomplete from "./SearchTickerAutocomplete";
 
 export default class GridHeader extends React.Component {
 
-    constructor({saveColumnsState, handleSelectWatchlist, addTickerToWatchlist, ...props}) {
-        super({saveColumnsState, handleSelectWatchlist, addTickerToWatchlist, ...props});
-        this.saveColumnsState = saveColumnsState.bind(this);
-        this.handleSelectWatchlist = handleSelectWatchlist.bind(this);
-        this.addTickerToWatchlist = addTickerToWatchlist.bind(this);
+    constructor(props) {
+
+        super(props);
+        this.saveColumnsState = this.props.saveColumnsState.bind(this);
+        this.handleSelectWatchlist = this.props.handleSelectWatchlist.bind(this);
+        this.addTickerToWatchlist = this.props.addTickerToWatchlist.bind(this);
     }
 
     render() {

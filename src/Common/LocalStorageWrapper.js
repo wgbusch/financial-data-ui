@@ -13,14 +13,12 @@ const localStorage = window.localStorage;
 //     localStorage = window.localStorage;
 // }
 
-export function getWatchlistsNames()
-{
+export function getWatchlistsNames() {
     const watchlists = localStorage.getItem(WATCHLISTS_KEY)
     return watchlists.split(',').filter(Boolean);
 }
 
-export function addWatchlist(name)
-{
+export function addWatchlist(name) {
     const existingNames = getWatchlistsNames();
     if (name && name.match('^[a-zA-Z0-9 ]{1,20}$') && !existingNames.includes(name)) {
         if (localStorage.getItem(name)) return
@@ -30,8 +28,7 @@ export function addWatchlist(name)
     }
 }
 
-export function updateCurrentWatchlistWithNewTicker(ticker)
-{
+export function updateCurrentWatchlistWithNewTicker(ticker) {
     const currentWatchlist = getCurrentWatchlist();
     const content = localStorage.getItem(currentWatchlist);
     const newContent = content ? `${content},${ticker}` : ticker;
@@ -39,8 +36,7 @@ export function updateCurrentWatchlistWithNewTicker(ticker)
     return newContent.split(',').filter(Boolean);
 }
 
-export function deleteWatchlist(watchlistToDelete)
-{
+export function deleteWatchlist(watchlistToDelete) {
     if (!watchlistToDelete || watchlistToDelete === DEFAULT_WATCHLIST_NAME) return -1;
 
     const currentWatchlist = getCurrentWatchlist();
@@ -63,80 +59,74 @@ export function deleteWatchlist(watchlistToDelete)
     return currentWatchlist;
 }
 
-export function getCurrentWatchlistContent()
-{
+export function deleteTickerFromWatchlist(tickerToDelete, watchlist) {
+    if (!tickerToDelete) return -1;
+    const watchlistTickers = getWatchlistContent(watchlist);
+    const filteredTickers = watchlistTickers.filter(ticker => ticker !== tickerToDelete);
+    localStorage.setItem(watchlist, filteredTickers.join(','));
+}
+
+export function getCurrentWatchlistContent() {
     const currentWatchlist = getCurrentWatchlist();
     return getWatchlistContent(currentWatchlist);
 }
 
-export function getWatchlistContent(name)
-{
+export function getWatchlistContent(name) {
     const watchlists = getWatchlistsNames();
     if (!watchlists.includes(name)) return;
     return localStorage.getItem(name).split(',').filter(Boolean);
 }
 
-export function setUpLocalStorage()
-{
+export function setUpLocalStorage() {
     __createWatchlistsStorage__();
     __createCurrentWatchlistStorage__();
     __createDefaultWatchlist__();
     __createColumnsState__();
 }
 
-export function getCurrentWatchlist()
-{
+export function getCurrentWatchlist() {
     return localStorage.getItem(CURRENT_WATCHLIST_KEY)
 }
 
-export function setCurrentWatchlist(name)
-{
+export function setCurrentWatchlist(name) {
     localStorage.setItem(CURRENT_WATCHLIST_KEY, name);
 }
 
-export function setCurrentWatchlist2(name)
-{
+export function setCurrentWatchlist2(name) {
     localStorage.setItem(CURRENT_WATCHLIST_KEY, name);
 }
 
-export function resetCurrentWatchlist()
-{
+export function resetCurrentWatchlist() {
     localStorage.setItem(CURRENT_WATCHLIST_KEY, DEFAULT_WATCHLIST_NAME);
 }
 
-export function setColumnsState(state)
-{
+export function setColumnsState(state) {
     localStorage.setItem(COLUMNS_STATE_KEY, state);
 }
 
-export function getColumnsState()
-{
+export function getColumnsState() {
     return localStorage.getItem(COLUMNS_STATE_KEY);
 }
 
-function __createWatchlistsStorage__()
-{
+function __createWatchlistsStorage__() {
     if (!localStorage.getItem(WATCHLISTS_KEY)) {
         localStorage.setItem(WATCHLISTS_KEY, `${DEFAULT_WATCHLIST_NAME},`)
     }
 }
 
-function __createCurrentWatchlistStorage__()
-{
+function __createCurrentWatchlistStorage__() {
     if (!localStorage.getItem(CURRENT_WATCHLIST_KEY)) {
         localStorage.setItem(CURRENT_WATCHLIST_KEY, DEFAULT_WATCHLIST_NAME)
     }
 }
 
-function __createColumnsState__()
-{
+function __createColumnsState__() {
     if (!localStorage.getItem(COLUMNS_STATE_KEY)) {
         localStorage.setItem(COLUMNS_STATE_KEY, JSON.stringify(initialGridState))
     }
 }
 
-function __createDefaultWatchlist__()
-{
+function __createDefaultWatchlist__() {
     if (!localStorage.getItem(DEFAULT_WATCHLIST_NAME)) {
         localStorage.setItem(DEFAULT_WATCHLIST_NAME, DEFAULT_WATCHLIST_VALUE)
     }
