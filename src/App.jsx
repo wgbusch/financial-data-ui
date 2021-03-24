@@ -1,7 +1,7 @@
 import './App.css';
 import React from 'react';
 import ParentGrid from "./Components/ParentGrid/ParentGrid";
-import {getColumnsState, setColumnsState, setUpLocalStorage} from "./Common/LocalStorageWrapper";
+import {getColumnsState, setColumnsState, setCurrentWatchlist, setUpLocalStorage} from "./Common/LocalStorageWrapper";
 import GridHeader from "./Components/ParentGrid/GridHeader/GridHeader";
 import {successNotification} from "./Components/ToastNotifications";
 
@@ -11,7 +11,6 @@ class App extends React.Component {
         super(props);
         this.state = {
             columnsState: JSON.parse(getColumnsState()),
-            columnsVisible: [],
         }
         this.saveColumnsState = this.saveColumnsState.bind(this);
         this.handleChangeOfColumns = this.handleChangeOfColumns.bind(this);
@@ -23,6 +22,7 @@ class App extends React.Component {
         }
     }
 
+
     saveColumnsState = () => {
         let state = this.state.columnsState;
         setColumnsState(JSON.stringify(state));
@@ -33,6 +33,11 @@ class App extends React.Component {
         // eslint-disable-next-line react/no-direct-mutation-state
         this.state.columnsState = params;
         console.log("state changed.");
+    }
+
+    handleSelectWatchlist = (currentWatchlist) => {
+        setCurrentWatchlist(currentWatchlist);
+        this.showCurrentWatchlistTickers();
     }
 
     componentDidMount() {
@@ -48,7 +53,9 @@ class App extends React.Component {
                     // handleSelectWatchlist={this.handleSelectWatchlist}
                     // addTickerToWatchlist={this.addTickerToWatchlist}
                 />
-                <ParentGrid columnsState={this.state.columnsState} handleChangeOfColumns={this.handleChangeOfColumns}/>
+                <ParentGrid
+                    columnsState={this.state.columnsState}
+                    handleChangeOfColumns={this.handleChangeOfColumns}/>
             </div>
         );
     }

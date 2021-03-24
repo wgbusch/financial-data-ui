@@ -54,7 +54,7 @@ export default class ParentGrid extends React.Component {
             detailRowHeight: 400,
             detailCellRenderer: 'detailGrid',
             frameworkComponents: {detailGrid: DetailGrid},
-            watchlist: null
+            watchlist: props.watchlist,
         }
 
     }
@@ -104,17 +104,11 @@ export default class ParentGrid extends React.Component {
         const selectedRows = this.gridApi.getSelectedRows();
         this.setState({displaySymbol: selectedRows.length === 1 ? selectedRows[0]["Symbol"] : this.state.displaySymbol})
     };
-
-    // saveColumnsState = () => {
-    //     let state = this.gridColumnApi.getColumnState();
-    //     setColumnsState(JSON.stringify(state));
-    //     successNotification("View saved.");
+    //
+    // handleSelectWatchlist = (currentWatchlist) => {
+    //     setCurrentWatchlist(currentWatchlist);
+    //     this.showCurrentWatchlistTickers();
     // }
-
-    handleSelectWatchlist = (currentWatchlist) => {
-        setCurrentWatchlist(currentWatchlist);
-        this.showCurrentWatchlistTickers();
-    }
 
     addTickerToWatchlist = (ticker) => {
         updateCurrentWatchlistWithNewTicker(ticker);
@@ -173,12 +167,10 @@ export default class ParentGrid extends React.Component {
                 detailCellRenderer={this.state.detailCellRenderer}
                 getContextMenuItems={this.getContextMenuItems}
                 onColumnResized={ () => {
-                    let state = this.gridColumnApi.getColumnState();
-                    this.handleChangeOfColumns(state);
+                    this.handleChangeOfColumns(this.gridColumnApi.getColumnState());
                 }}
                 onDragStopped={ () => {
-                    let state = this.gridColumnApi.getColumnState();
-                    this.handleChangeOfColumns(state);
+                    this.handleChangeOfColumns(this.gridColumnApi.getColumnState());
                 }}
                 frameworkComponents={this.state.frameworkComponents}
                 keepDetailRows={this.state.keepDetailRows}

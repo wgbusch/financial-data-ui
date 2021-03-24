@@ -4,8 +4,6 @@ import {SaveOutlined} from "@ant-design/icons";
 import './GridHeader.css'
 import Watchlists from "./Watchlists";
 import SearchTickerAutocomplete from "./SearchTickerAutocomplete";
-import {setColumnsState} from "../../../Common/LocalStorageWrapper";
-import {successNotification} from "../../ToastNotifications";
 
 
 export default class GridHeader extends React.Component {
@@ -16,12 +14,6 @@ export default class GridHeader extends React.Component {
         this.saveColumnsState = this.props.saveColumnsState.bind(this);
         // this.handleSelectWatchlist = this.props.handleSelectWatchlist.bind(this);
         // this.addTickerToWatchlist = this.props.addTickerToWatchlist.bind(this);
-    }
-
-    saveColumnsState = () => {
-        let state = this.gridColumnApi.getColumnState();
-        setColumnsState(JSON.stringify(state));
-        successNotification("View saved.");
     }
 
     render() {
