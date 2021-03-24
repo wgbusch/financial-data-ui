@@ -12,8 +12,8 @@ export default class GridHeader extends React.Component {
 
         super(props);
         this.saveColumnsState = this.props.saveColumnsState.bind(this);
-        // this.handleSelectWatchlist = this.props.handleSelectWatchlist.bind(this);
-        // this.addTickerToWatchlist = this.props.addTickerToWatchlist.bind(this);
+        this.handleSelectWatchlist = this.props.handleSelectWatchlist.bind(this);
+        this.addTickerToWatchlist = this.props.addTickerToWatchlist.bind(this);
     }
 
     render() {
