@@ -27,12 +27,14 @@ export default class ParentGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
-        this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
-        this.saveColumnsState = this.saveColumnsState.bind(this);
-        this.handleSelectWatchlist = this.handleSelectWatchlist.bind(this);
-        this.showCurrentWatchlistTickers = this.showCurrentWatchlistTickers.bind(this);
-        this.getContextMenuItems = this.getContextMenuItems.bind(this);
+        // this.handleOnSelectionChanged = this.handleOnSelectionChanged.bind(this);
+        // this.handleFirstDataRendered = this.handleFirstDataRendered.bind(this)
+        // this.saveColumnsState = this.props.saveColumnsState.bind(this);
+        // this.handleSelectWatchlist = this.handleSelectWatchlist.bind(this);
+        // this.showCurrentWatchlistTickers = this.showCurrentWatchlistTickers.bind(this);
+        // this.getContextMenuItems = this.getContextMenuItems.bind(this);
+        // this.handleColumnEverythingChanged = this.handleColumnEverythingChanged.bind(this);
+        this.handleChangeOfColumns = this.props.handleChangeOfColumns.bind(this);
 
         this.state = {
             defaultColDef: {
@@ -45,6 +47,7 @@ export default class ParentGrid extends React.Component {
             columnTypes: columnTypes(),
             masterDetail: true,
             rowSelection: 'single',
+            columnsState: props.columnsState,
             rowData: null,
             pagination: true,
             keepDetailRows: true,
@@ -53,7 +56,9 @@ export default class ParentGrid extends React.Component {
             frameworkComponents: {detailGrid: DetailGrid},
             watchlist: null
         }
+
     }
+
 
     handleFirstDataRendered = () => {
         this.gridColumnApi.applyColumnState({
@@ -82,7 +87,7 @@ export default class ParentGrid extends React.Component {
             this.setState({
                     rowData: response.data,
                     columnDefs: existingColumns,
-                    columnsState: JSON.parse(getColumnsState()),
+                    // columnsState: JSON.parse(getColumnsState()),
                     watchlist: currentWatchlist,
                 }
             );
@@ -100,11 +105,11 @@ export default class ParentGrid extends React.Component {
         this.setState({displaySymbol: selectedRows.length === 1 ? selectedRows[0]["Symbol"] : this.state.displaySymbol})
     };
 
-    saveColumnsState = () => {
-        let state = this.gridColumnApi.getColumnState();
-        setColumnsState(JSON.stringify(state));
-        successNotification("View saved.");
-    }
+    // saveColumnsState = () => {
+    //     let state = this.gridColumnApi.getColumnState();
+    //     setColumnsState(JSON.stringify(state));
+    //     successNotification("View saved.");
+    // }
 
     handleSelectWatchlist = (currentWatchlist) => {
         setCurrentWatchlist(currentWatchlist);
@@ -155,28 +160,33 @@ export default class ParentGrid extends React.Component {
         this.countNum++;
         console.log(this.countNum);
         return (
-            <div className="ag-theme-alpine container">
-                <GridHeader watchlist={this.state.watchlist} saveColumnsState={this.saveColumnsState}
-                            handleSelectWatchlist={this.handleSelectWatchlist}
-                            addTickerToWatchlist={this.addTickerToWatchlist}/>
-                <AgGridReact
-                    rowSelection={this.state.rowSelection}
-                    rowData={this.state.rowData}
-                    onSelectionChanged={this.handleOnSelectionChanged}
-                    onGridReady={this.handleOnGridReady}
-                    onFirstDataRendered={this.handleFirstDataRendered}
-                    defaultColDef={this.state.defaultColDef}
-                    columnDefs={this.state.columnDefs}
-                    masterDetail={this.state.masterDetail}
-                    detailRowHeight={this.state.detailRowHeight}
-                    detailCellRenderer={this.state.detailCellRenderer}
-                    getContextMenuItems={this.getContextMenuItems}
-                    frameworkComponents={this.state.frameworkComponents}
-                    keepDetailRows={this.state.keepDetailRows}
-                    columnTypes={this.state.columnTypes}
-                    pagination={this.state.pagination}>
-                </AgGridReact>
-            </div>
+            <AgGridReact
+                rowSelection={this.state.rowSelection}
+                rowData={this.state.rowData}
+                onSelectionChanged={this.handleOnSelectionChanged}
+                onGridReady={this.handleOnGridReady}
+                onFirstDataRendered={this.handleFirstDataRendered}
+                defaultColDef={this.state.defaultColDef}
+                columnDefs={this.state.columnDefs}
+                masterDetail={this.state.masterDetail}
+                detailRowHeight={this.state.detailRowHeight}
+                detailCellRenderer={this.state.detailCellRenderer}
+                getContextMenuItems={this.getContextMenuItems}
+                onColumnResized={ () => {
+                    let state = this.gridColumnApi.getColumnState();
+                    this.handleChangeOfColumns(state);
+                }}
+                onDragStopped={ () => {
+                    let state = this.gridColumnApi.getColumnState();
+                    this.handleChangeOfColumns(state);
+                }}
+                frameworkComponents={this.state.frameworkComponents}
+                keepDetailRows={this.state.keepDetailRows}
+                columnTypes={this.state.columnTypes}
+                pagination={this.state.pagination}
+
+            >
+            </AgGridReact>
         )
     }
 }
