@@ -4,12 +4,12 @@ import {SaveOutlined} from "@ant-design/icons";
 import './GridHeader.css'
 import Watchlists from "./Watchlists";
 import SearchTickerAutocomplete from "./SearchTickerAutocomplete";
+import {getCurrentWatchlist} from "../../../Common/LocalStorageWrapper";
 
 
 export default class GridHeader extends React.Component {
 
     constructor(props) {
-
         super(props);
         this.saveColumnsState = this.props.saveColumnsState.bind(this);
         this.handleSelectWatchlist = this.props.handleSelectWatchlist.bind(this);
@@ -17,7 +17,7 @@ export default class GridHeader extends React.Component {
     }
 
     render() {
-        const currentWatchlist = this.props.watchlist;
+        const currentWatchlist = getCurrentWatchlist();
         return (
             <div className={"grid-header"}>
                 <div style={{float: "left"}}>

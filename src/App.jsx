@@ -1,12 +1,15 @@
 import './App.css';
 import React from 'react';
-import ParentGrid from "./Components/ParentGrid/ParentGrid";
+import MainGrid from "./Components/ParentGrid/MainGrid";
 import {
-    getColumnsState, getCurrentWatchlist,
+    deleteTickerFromWatchlist,
+    getColumnsState,
+    getCurrentWatchlist,
     getCurrentWatchlistContent,
     setColumnsState,
     setCurrentWatchlist,
-    setUpLocalStorage, updateCurrentWatchlistWithNewTicker
+    setUpLocalStorage,
+    updateCurrentWatchlistWithNewTicker
 } from "./Common/LocalStorageWrapper";
 import GridHeader from "./Components/ParentGrid/GridHeader/GridHeader";
 import {successNotification} from "./Components/ToastNotifications";
@@ -20,7 +23,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             columnsState: JSON.parse(getColumnsState()),
-            rowData : [],
+            rowData: [],
             watchlist: getCurrentWatchlist(),
         }
         this.saveColumnsState = this.saveColumnsState.bind(this);
@@ -44,7 +47,6 @@ class App extends React.Component {
     handleChangeOfColumns = (params) => {
         // eslint-disable-next-line react/no-direct-mutation-state
         this.state.columnsState = params;
-        console.log("state changed.");
     }
 
     handleSelectWatchlist = (currentWatchlist) => {
@@ -52,13 +54,12 @@ class App extends React.Component {
         this.showCurrentWatchlistTickers();
     }
 
-
     addTickerToWatchlist = (ticker) => {
         updateCurrentWatchlistWithNewTicker(ticker);
         this.showCurrentWatchlistTickers();
     }
 
-    showCurrentWatchlistTickers =() =>{
+    showCurrentWatchlistTickers = () => {
         const watchlistContent = getCurrentWatchlistContent().join(',');
 
         const callback = (httpRequest) => {
@@ -71,6 +72,11 @@ class App extends React.Component {
         fetchQuotes(watchlistContent, callback, () => {
             this.setState({rowData: JSON.stringify(dummyQuotesData)});
         });
+    }
+
+    handleDeleteTickerFromWatchlist = (ticker) => {
+        deleteTickerFromWatchlist(ticker, this.state.watchlist);
+        this.setState({rowData: this.state.rowData.filter(row => row.symbol !== ticker)});
     }
 
     componentDidMount() {
@@ -88,12 +94,10 @@ class App extends React.Component {
                 existingColumns = response.columns;
             }
 
-            const currentWatchlist = getCurrentWatchlist();
             this.setState({
                     rowData: response.data,
                     columnDefs: existingColumns,
                     columnsState: JSON.parse(getColumnsState()),
-                    watchlist: currentWatchlist,
                 }
             );
         };
@@ -109,17 +113,16 @@ class App extends React.Component {
         return (
             <div className="ag-theme-alpine container">
                 <GridHeader
-                    watchlist={this.state.watchlist}
                     saveColumnsState={this.saveColumnsState}
                     handleSelectWatchlist={this.handleSelectWatchlist}
                     addTickerToWatchlist={this.addTickerToWatchlist}
                 />
-                <ParentGrid
+                <MainGrid
                     columnsState={this.state.columnsState}
                     handleChangeOfColumns={this.handleChangeOfColumns}
-                    watchlist = {this.state.watchlist}
-                    rowData = {this.state.rowData}
-                    columnDefs = {this.state.columnDefs} />
+                    handleDeleteTickerFromWatchlist={this.handleDeleteTickerFromWatchlist}
+                    rowData={this.state.rowData}
+                    columnDefs={this.state.columnDefs}/>
             </div>
         );
     };
