@@ -1,5 +1,5 @@
 import {Dropdown, Form, Input, Menu, Modal, Tooltip} from "antd";
-import {CloseOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {CloseOutlined, ExclamationCircleOutlined, PlusOutlined, UnorderedListOutlined} from "@ant-design/icons";
 
 import React, {useState} from "react";
 import {
@@ -81,8 +81,18 @@ export default function Watchlists({handleSelectWatchlist}) {
 
     const handleDeleteWatchlist = (name) => {
         if (name !== DEFAULT_WATCHLIST_NAME) {
-            const currentWatchlist = deleteWatchlist(name);
-            handleSelectWatchlist(currentWatchlist);
+            const {confirm} = Modal;
+            confirm({
+                title: 'Do you Want to delete this watchlist?',
+                icon: <ExclamationCircleOutlined/>,
+                zIndex: 2000,
+                onOk() {
+                    const currentWatchlist = deleteWatchlist(name);
+                    handleSelectWatchlist(currentWatchlist);
+                },
+                onCancel() {
+                },
+            });
         } else {
             Modal.error({
                 content: 'Can\'t delete default watchlist.',

@@ -1,7 +1,7 @@
 import {Button} from 'antd';
 import {CaretRightOutlined} from '@ant-design/icons';
 import React from 'react';
-import './DetailGrid.css'
+import './TickerDetails.css'
 
 export default class RunValuation extends React.Component {
     state = {

@@ -6,7 +6,7 @@ import 'ag-grid-enterprise/dist/styles/ag-theme-alpine.css';
 import React from 'react';
 import './ParentGrid.css';
 import {columnTypes} from "../../Common/columnTypes";
-import DetailGrid from "./DetailGrid/DetailGrid";
+import TickerDetails from "./DetailGrid/TickerDetails";
 
 export default class MainGrid extends React.Component {
     countNum = 0;
@@ -34,7 +34,7 @@ export default class MainGrid extends React.Component {
             keepDetailRows: true,
             detailRowHeight: 400,
             detailCellRenderer: 'detailGrid',
-            frameworkComponents: {detailGrid: DetailGrid},
+            frameworkComponents: {detailGrid: TickerDetails},
         }
     }
 

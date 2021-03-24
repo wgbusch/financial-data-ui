@@ -51,6 +51,7 @@ class App extends React.Component {
 
     handleSelectWatchlist = (currentWatchlist) => {
         setCurrentWatchlist(currentWatchlist);
+        this.setState({watchlist: getCurrentWatchlist()});
         this.showCurrentWatchlistTickers();
     }
 
@@ -60,14 +61,23 @@ class App extends React.Component {
     }
 
     showCurrentWatchlistTickers = () => {
+        const callback = (httpRequest) => {
+            const response = JSON.parse(httpRequest.responseText);
+
+            this.setState({
+                rowData: response.data,
+            });
+
+            if (response.nonExistingSymbols) {
+                const currentWatchlist = getCurrentWatchlist();
+                response.nonExistingSymbols.forEach(ticker => {
+                    deleteTickerFromWatchlist(ticker, currentWatchlist)
+                })
+            }
+        };
+
         const watchlistContent = getCurrentWatchlistContent().join(',');
 
-        const callback = (httpRequest) => {
-            this.setState({
-                rowData: JSON.parse(httpRequest.responseText).data,
-                watchlist: getCurrentWatchlist(),
-            });
-        };
         fetchQuotes(watchlistContent, callback, () => {
             this.setState({rowData: JSON.stringify(dummyQuotesData)});
         });

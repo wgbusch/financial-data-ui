@@ -1,17 +1,13 @@
-import {AgGridReact} from "ag-grid-react";
-
-import 'ag-grid-enterprise';
-import 'ag-grid-enterprise/dist/styles/ag-grid.css';
-import 'ag-grid-enterprise/dist/styles/ag-theme-alpine.css';
-import React from 'react';
+import React from "react";
 import {columnTypes} from "../../../Common/columnTypes";
-import './DetailGrid.css'
 import buyOrWriteCellMainRenderer from "./buyOrWriteCellMainRenderer";
 import BuyOrWriteCellOptionRenderer from "./BuyOrWriteCellOptionRenderer";
 import ExpiryDateDropdown from "./ExpiryDateDropdown";
 import RunValuation from "./RunValuation";
+import {AgGridReact} from "ag-grid-react";
 
-export default class DetailGrid extends React.Component {
+
+export default class OptionsGrid extends React.Component {
 
     constructor(props) {
         super(props);
@@ -38,12 +34,6 @@ export default class DetailGrid extends React.Component {
                 'in-the-money': this.inTheMoney
             },
         }
-    }
-
-    inTheMoney = (params) => {
-        let strikePrice = params.data.strike;
-        let closePrice = this.props.data.Close;
-        return parseInt(strikePrice) <= parseInt(closePrice);
     }
 
     handleOnGridReady = (params) => {
@@ -83,13 +73,15 @@ export default class DetailGrid extends React.Component {
         this.state.masterGridApi.addDetailGridInfo(this.state.rowId, gridInfo);
     };
 
+    inTheMoney = (params) => {
+        let strikePrice = params.data.strike;
+        let closePrice = this.props.data.Close;
+        return parseInt(strikePrice) <= parseInt(closePrice);
+    }
+
     render() {
         return (
             <div className="ag-theme-alpine detailGridcontainer">
-                <div style ={{display: 'inline-block'}}>
-                <ExpiryDateDropdown expiryDates ={this.state.columnTypes.expiryDate.filterParams.values}/>
-                <RunValuation/>
-                </div>
                 <AgGridReact
                     id="detailGrid"
                     rowSelection={this.state.rowSelection}
@@ -105,11 +97,4 @@ export default class DetailGrid extends React.Component {
             </div>
         )
     }
-
-    componentWillUnmount = () => {
-        console.log('removing detail grid info with id: ', this.state.rowId);
-
-        // the detail grid is automatically destroyed as it is a React component
-        this.state.masterGridApi.removeDetailGridInfo(this.state.rowId);
-    };
 }

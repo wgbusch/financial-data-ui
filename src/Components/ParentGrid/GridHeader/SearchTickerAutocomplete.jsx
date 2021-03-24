@@ -41,9 +41,19 @@ export default function SearchTickerAutocomplete({addTickerToWatchlist}) {
 
             const options = foundTickers.map((ticker) => {
                 return renderItem({symbol: ticker[0].toUpperCase()})
-            })
+            });
 
-            setOptions([{label: renderTitle('Stocks'), options: options}])
+            function uniqueOpts(list) {
+                const seen = {};
+                return list.filter(function (item) {
+                    const ticker = item.value;
+                    return seen.hasOwnProperty(ticker) ? false : (seen[ticker] = true);
+                })
+            }
+
+            const uniqueOptions = uniqueOpts(options)
+
+            setOptions([{label: renderTitle('Stocks'), options: uniqueOptions}])
         }
 
 
