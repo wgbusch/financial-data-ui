@@ -122,14 +122,24 @@ export default class ParentGrid extends React.Component {
 
         const callback = (httpRequest) => {
             this.gridApi.hideOverlay();
+            const currentWatchlist = getCurrentWatchlist();
+
+            const response = JSON.parse(httpRequest.responseText);
 
             this.setState({
-                rowData: JSON.parse(httpRequest.responseText).data,
-                watchlist: getCurrentWatchlist(),
+                rowData: response.data,
+                watchlist: currentWatchlist,
             });
+            if (response.nonExistingSymbols) {
+                response.nonExistingSymbols.forEach(ticker => {
+                    deleteTickerFromWatchlist(ticker, currentWatchlist)
+                })
+            }
         };
-        fetchQuotes(watchlistContent, callback, () => {
-            this.setState({rowData: JSON.stringify(dummyQuotesData)});
+        fetchQuotes(watchlistContent, callback, (httpRequest) => {
+            if (httpRequest) {
+                this.setState({rowData: JSON.stringify(dummyQuotesData)});
+            }
         });
     }
 
