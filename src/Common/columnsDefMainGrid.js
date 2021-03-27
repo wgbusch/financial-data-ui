@@ -1,4 +1,4 @@
-const columnsDef = {
+const columnsDefMainGrid = {
     "ask": {
         "headerName": "Ask",
         "field": "ask",
@@ -101,4 +101,4 @@ const columnsDef = {
 }
 
 
-export default columnsDef;
+export default columnsDefMainGrid;

@@ -15,7 +15,7 @@ import GridHeader from "./Components/ParentGrid/GridHeader/GridHeader";
 import {successNotification} from "./Components/ToastNotifications";
 import {fetchQuotes} from "./Common/Hooks";
 import dummyQuotesData from "./Common/dummyData/dummyQuotesData";
-import columnsDef from "./Common/columnsDef";
+import columnsDefMainGrid from "./Common/columnsDefMainGrid";
 
 class App extends React.Component {
 
@@ -93,14 +93,15 @@ class App extends React.Component {
 
         const updateData = (response) => {
             let existingColumns = [];
-            if (response.columns) {
-                response.columns.forEach(colName => {
-                    if (columnsDef[colName.toLowerCase()]) {
-                        existingColumns.push(columnsDef[colName.toLowerCase()])
+            const columns = response.columns;
+            if (columns) {
+                columns.forEach(colName => {
+                    if (columnsDefMainGrid[colName.toLowerCase()]) {
+                        existingColumns.push(columnsDefMainGrid[colName.toLowerCase()])
                     }
                 });
             } else {
-                existingColumns = response.columns;
+                existingColumns = columns;
             }
 
             this.setState({
@@ -112,10 +113,10 @@ class App extends React.Component {
         };
 
         const watchlistContent = getCurrentWatchlistContent().join(',');
-
-        fetchQuotes(watchlistContent, (t) => {
-            updateData((JSON.parse(t.responseText)))
-        }, updateData);
+        const callback = (t) => {
+            updateData(JSON.parse(t.responseText))
+        };
+        fetchQuotes(watchlistContent, callback, updateData);
     }
 
     render() {
